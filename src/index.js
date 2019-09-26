@@ -1,3 +1,6 @@
+let listArray = [];
+
+
 const listFactory = function(name) {
     const list = Object.create(listFactory.proto);
 
@@ -29,6 +32,11 @@ const newList = function(listName) {   // create a new list from user provided i
     return newUserList;
 };
 
+const removeList = function(listIndex) {   // permanently removes a list from the "master" array
+    let updatedArray = listArray.splice(listIndex, 1); // can use as purgatory
+    return updatedArray;
+};
+
 const itemFactory = function(title, note, date, priority) {
     const item = Object.create(itemFactory.proto);
     
@@ -56,6 +64,13 @@ itemFactory.proto = {
     getPriority: function() {
         return this.priority;
     },
+
+    changePriority: function() {
+        console.log(this);
+        console.log(this.priority);
+        return this.priority = (this.priority === true) ? false : true;
+
+    },
     
     viewDetails: function() {
         console.table([this.title, this.note, this.date, this.priority]);
@@ -67,9 +82,11 @@ const getNewItemInfo = function() {   // gets the user provided item name
     let itemTitle = prompt('Please describe this item.');
     let itemNote = prompt('Add a note to this item.');
     let itemDate = prompt('When is this item due?', '9/25');
-    let itemPriority = prompt('Is this a priorty?', 'true or false') === 'true' ? true : false;  
+    // let itemPriority = prompt('Is this a priorty?', 'true or false') === 'true' ? true : false;  
+    let itemPriority = false;  
     
     newItemInfoArray = [itemTitle, itemNote, itemDate, itemPriority];
+
     return newItemInfoArray;
 };
 
@@ -83,29 +100,46 @@ const addItemToList = function(listName, item) {   // adds an item to a specifie
     return listName.items;
 }
 
-const initList = function() {   // initializes app with a default list
+const assignItemToList = function(fromListName, itemIndex, toListName) {   // assigns item from one list to another
+    let itemToMove = fromListName.items.splice(itemIndex, 1);
+    toListName.items.push(itemToMove[0]);
+    console.log(toListName);
+
+}
+
+const markItemComplete = function(obj) {
+
+};
+
+const initList = (function() {   // initializes app with a default list
     const myList = listFactory('My List');
     const currentDate = new Date();
 
     myList.items = myList.addItem(itemFactory('To add a list item, click the + button.', 'This line is reserved for notes.', `Due: ${currentDate.getMonth()+1}/${currentDate.getDate()} `, false));
     myList.items = myList.addItem(itemFactory('To create a list, click on the list icon.'));
-    console.log(myList);
-};
+    listArray.push(myList);
+})();
 
-let taskOne = itemFactory('1. this is the name of your task', 'random note that will be entered here');
-let taskTwo = itemFactory('2. second task reporting in', 'some note we can write', '7/21/79', true);
+
+let buyInfo = itemFactory('Detergent', 'If possible, get Downy.');
+let moreBuyInfo = itemFactory('Kimchi Ramen', 'Look for extra spicy', '7/21', true);
 let buyList = listFactory('Buy List');
 let wishList = listFactory('Wish List');
 
-buyList.items = buyList.addItem(taskOne);
-buyList.items = buyList.addItem(taskTwo);
+buyList.items = buyList.addItem(buyInfo);
+buyList.items = buyList.addItem(moreBuyInfo);
 
 wishList.items = wishList.addItem(itemFactory('Nintendo Switch'));
 wishList.items = wishList.addItem(itemFactory('Xbox One'));
 wishList.items = wishList.addItem(itemFactory('PlayStation 4'));
 wishList.items = wishList.addItem(itemFactory('Oculus Rift'));
 
+// add all lists to a "master" list array
+listArray.push(wishList);
+listArray.push(buyList);
+
 console.log(buyList);
 console.log(wishList);
-// initList();
+console.log(listArray);
+
 
