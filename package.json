@@ -1,0 +1,26 @@
+{
+  "name": "to_do_list",
+  "version": "1.0.0",
+  "description": "a simple to-do list app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --progress --mode=production",
+    "watch": "webpack --progress --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ejoflo/to_do_list.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ejoflo/to_do_list/issues"
+  },
+  "homepage": "https://github.com/ejoflo/to_do_list#readme",
+  "devDependencies": {
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
+  }
+}
