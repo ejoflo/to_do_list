@@ -1,21 +1,16 @@
 const masterList = (function() {
     const listArray = [];
     
-    // const addList = (listName) => {
-    //     listArray.push(listName);
-    // };
-
     const getNewListName = () => {   // gets the user provided list name
         let listName = prompt('What is the name of this list?');
         return listName;
-    }
+    };
 
     const addNewList = (newListName) => {   // create a new list from user provided input
-        // let newUserList = listFactory(getNewListName());
         let newUserList = listFactory(newListName);
         listArray.push(newUserList);
     };
-    
+
     const removeList = (listIndex) => {   // permanently removes a list from the "master" array
         let deletedList = listArray.splice(listIndex, 1); // can use as purgatory
         console.log (deletedList);
@@ -24,14 +19,10 @@ const masterList = (function() {
     const getLists = () => {
         console.log('Master List Array contains:');
         console.log(listArray);
-        // listArray.forEach((list, index) => {
-        //     console.log(listArray[index]);
-        //     return listArray[index];
-        // });
     };
 
     return {
-        listArray, addNewList, removeList, getLists
+        listArray, addNewList, getNewListName, removeList, getLists
     };
 })();
 
@@ -125,7 +116,6 @@ const getNewItemInfo = function() {   // gets the user provided item name
     let itemTitle = prompt('Please describe this item.');
     let itemNote = prompt('Add a note to this item.');
     let itemDate = prompt('When is this item due?', '9/25');
-    // let itemPriority = prompt('Is this a priorty?', 'true or false') === 'true' ? true : false;
     let itemPriority = false;  
     let itemDone = false;
     
@@ -150,35 +140,27 @@ const assignItemToList = function(fromListName, itemIndex, toListName) {   // as
     console.log(toListName);
 }
 
-const markItemComplete = function(obj) {
-};
-
 const initList = (function() {   // initializes app with a default list
-    // const masterList.listArray[0] = listFactory('My List');
     const currentDate = new Date();
 
+    // Initialize My List
     masterList.addNewList('My List');
     masterList.listArray[0].items = masterList.listArray[0].addItem(itemFactory('To add a list item, click the + button.', 'This line is reserved for notes.', `Due: ${currentDate.getMonth()+1}/${currentDate.getDate()} `, false));
     masterList.listArray[0].items = masterList.listArray[0].addItem(itemFactory('To create a list, click on the list icon.'));
+
+    // Initialize Buy List
+    masterList.addNewList('Buy List');
+    let buyInfo = itemFactory('Detergent', 'If possible, get Downy.');
+    let moreBuyInfo = itemFactory('Kimchi Ramen', 'Look for extra spicy', '7/21', true, false);
+    masterList.listArray[1].items = masterList.listArray[1].addItem(buyInfo);
+    masterList.listArray[1].items = masterList.listArray[1].addItem(moreBuyInfo);
+
+    // Initialize Wish List
+    masterList.addNewList('Wish List');
+    masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Nintendo Switch'));
+    masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Xbox One'));
+    masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('PlayStation 4'));
+    masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Oculus Rift'));
 })();
 
-masterList.addNewList('Buy List');
-masterList.addNewList('Wish List');
-
-// Buy List
-let buyInfo = itemFactory('Detergent', 'If possible, get Downy.');
-let moreBuyInfo = itemFactory('Kimchi Ramen', 'Look for extra spicy', '7/21', true, false);
-masterList.listArray[1].items = masterList.listArray[1].addItem(buyInfo);
-masterList.listArray[1].items = masterList.listArray[1].addItem(moreBuyInfo);
-// let buyList = listFactory('Buy List');
-// let masterList.listArray[2] = listFactory('Wish List');
-
-// Wish List
-masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Nintendo Switch'));
-masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Xbox One'));
-masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('PlayStation 4'));
-masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Oculus Rift'));
-
 console.log(masterList.getLists());
-
-
