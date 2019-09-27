@@ -1,5 +1,35 @@
-let listArray = [];
+// let listArray = [];
 
+const masterList = (function() {
+    const listArray = [];
+    
+    const addList = (listName) => {
+        // console.log(listName);
+        // console.log(listArray);
+        listArray.push(listName);
+        console.log(listArray);
+        // return listArray;
+    };
+
+    const getNewListName = () => {   // gets the user provided list name
+        let listName = prompt('What is the name of this list?');
+        return listName;
+    }
+
+    const newList = function() {   // create a new list from user provided input
+        let newUserList = listFactory(getNewListName());
+        return addList(newUserList);
+    };
+    
+    const removeList = function(listIndex) {   // permanently removes a list from the "master" array
+        let updatedArray = listArray.splice(listIndex, 1); // can use as purgatory
+        return updatedArray;
+    };
+
+    return {
+        listArray, addList, newList, removeList
+    };
+})();
 
 const listFactory = function(name) {
     const list = Object.create(listFactory.proto);
@@ -17,25 +47,29 @@ listFactory.proto = {
 
     addItem: function(listItem) {
         const itemArray = this.items.concat([listItem]);
-        // console.log(this.items);
         return itemArray;
+    },
+
+    nameList: function(newListName) {   // gets the user provided list name
+        return this.name = newListName;
     }
+
 };
 
-const getNewListName = function() {   // gets the user provided list name
-    let listName = prompt('What is the name of this list?');
-    return listName;
-}
+// const getNewListName = function() {   // gets the user provided list name
+//     let listName = prompt('What is the name of this list?');
+//     return listName;
+// }
 
-const newList = function(listName) {   // create a new list from user provided input
-    let newUserList = listFactory(listName);
-    return newUserList;
-};
+// const newList = function(listName) {   // create a new list from user provided input
+//     let newUserList = listFactory(listName);
+//     return newUserList;
+// };
 
-const removeList = function(listIndex) {   // permanently removes a list from the "master" array
-    let updatedArray = listArray.splice(listIndex, 1); // can use as purgatory
-    return updatedArray;
-};
+// const removeList = function(listIndex) {   // permanently removes a list from the "master" array
+//     let updatedArray = listArray.splice(listIndex, 1); // can use as purgatory
+//     return updatedArray;
+// };
 
 const itemFactory = function(title, note, date, priority) {
     const item = Object.create(itemFactory.proto);
@@ -66,10 +100,7 @@ itemFactory.proto = {
     },
 
     changePriority: function() {
-        console.log(this);
-        console.log(this.priority);
         return this.priority = (this.priority === true) ? false : true;
-
     },
     
     viewDetails: function() {
@@ -108,7 +139,6 @@ const assignItemToList = function(fromListName, itemIndex, toListName) {   // as
 }
 
 const markItemComplete = function(obj) {
-
 };
 
 const initList = (function() {   // initializes app with a default list
@@ -117,9 +147,9 @@ const initList = (function() {   // initializes app with a default list
 
     myList.items = myList.addItem(itemFactory('To add a list item, click the + button.', 'This line is reserved for notes.', `Due: ${currentDate.getMonth()+1}/${currentDate.getDate()} `, false));
     myList.items = myList.addItem(itemFactory('To create a list, click on the list icon.'));
-    listArray.push(myList);
+    masterList.addList(myList);
+    console.log(masterList.listArray);
 })();
-
 
 let buyInfo = itemFactory('Detergent', 'If possible, get Downy.');
 let moreBuyInfo = itemFactory('Kimchi Ramen', 'Look for extra spicy', '7/21', true);
@@ -135,11 +165,13 @@ wishList.items = wishList.addItem(itemFactory('PlayStation 4'));
 wishList.items = wishList.addItem(itemFactory('Oculus Rift'));
 
 // add all lists to a "master" list array
-listArray.push(wishList);
-listArray.push(buyList);
+masterList.addList(wishList);
+masterList.addList(buyList);
+// listArray.push(wishList);
+// listArray.push(buyList);
 
 console.log(buyList);
 console.log(wishList);
-console.log(listArray);
+console.log(masterList.listArray);
 
 
