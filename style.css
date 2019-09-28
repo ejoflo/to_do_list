@@ -10,3 +10,117 @@ body {
     color: white;
     background-color: black;
 }
+
+h1 {
+    padding: 20px;
+    text-align: center;
+    margin: 0 auto;
+    color: rgb(92, 190, 255);
+}
+
+#main {
+    display: grid;
+    gap: 5px;
+    grid-template-columns: 150px 400px;
+    /* background-color: rgb(39, 37, 37); */
+    /* border: 1px solid white; */
+    justify-content: center;
+}
+
+#listGrid {
+    display: grid;
+    /* grid-template-columns: auto; */
+    height: auto;
+    background-color: rgb(17, 10, 13);
+    border: 1px solid rgb(255, 54, 154);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    align-items: start;
+}
+
+.newList {
+    font-size: 14pt;
+    font-weight: bold;
+    height: 25px;
+    background-color: rgb(54, 6, 36);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    /* border: 1px solid rgb(68, 13, 36); */
+}
+
+.currentList {
+    font-size: 14pt;
+    font-weight: bold;
+    color: rgb(255, 54, 154);
+}
+
+#itemsGrid {
+    display: grid;
+    grid-template-columns: 40px auto;
+    background-color: rgb(2, 21, 31);
+    border: 1px solid rgb(71, 136, 156);
+    /* border-top: 1px solid rgb(71, 136, 156);
+    border-left: 1px solid rgb(71, 136, 156);
+    border-bottom: 1px solid rgb(71, 136, 156); */
+    border-radius: 10px;
+}
+.newItem {
+    display: grid;
+    grid-column: 1 / 2;
+    width: 40px;
+    height: 40px;
+    font-size: 25pt;
+    text-align: middle;
+    line-height: 0%;
+    border: 2px solid rgb(54, 208, 255);
+    color: white;
+    background-color: black;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 0px;
+    align-self: center;
+    justify-self: start;
+}
+
+button[class^="itemCheck"] {
+    display: grid;
+    font-size: 20px;
+    vertical-align: middle;
+    line-height: 0px;
+    width: 20px;
+    height: 20px;
+    grid-column: 1 / 2;
+    /* padding: 10px; */
+    color:white;
+    background-color: black;
+    border: 2px solid rgb(54, 208, 255);
+    align-self: center;
+    justify-self: center;
+}
+
+p[class^="list"] {
+    display: grid;
+    font-size: 14pt;
+    font-weight: bold;
+    height: 25px;
+    border-bottom: 1px solid rgb(109, 20, 57);
+}
+
+p[class^="item"] {
+    display: grid;
+    grid-column: 2 / 3;
+    padding: 10px;
+    border-bottom: 1px solid rgb(54, 208, 255);
+    border-top-left-radius: 0px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 0px;
+}
+
+p[class^="note"] {
+    font-size: 10pt;
+    color: rgb(255, 0, 149);
+}
