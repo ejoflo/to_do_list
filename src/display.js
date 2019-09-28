@@ -36,7 +36,6 @@ const displayItems = function(listIndex) {
     itemsGrid.appendChild(blankItem).classList.add(`item`);
 
     masterList.listArray[listIndex].items.forEach((item, index, itemsArray) => {   // render all items to the list
-        console.log(item);
         itemsGrid.appendChild(document.createElement('button')).classList.add(`itemCheck${index}`);   // create a checkbox for every item
         itemsGrid.appendChild(document.createElement('p')).classList.add(`item${index}`);   // create a <p> element with class "item" for every item
 
@@ -79,31 +78,68 @@ const newItemDOM = function() {
     createListeners();
 };
 
-const refreshDisplay = function() {
+const refreshDisplay = function() {   // wipe the lists and items grids clean
     document.querySelectorAll('#itemsGrid').forEach((item, itemIndex) => {
-        item.remove();
-        // itemsGrid.item.remove();
+        
+        while (itemsGrid.firstChild) {
+            itemsGrid.removeChild(itemsGrid.firstChild);
+        }
     });
-    document.querySelectorAll('#listGrid').forEach((item, itemIndex) => {
-        item.remove();
-        // itemsGrid.item.remove();
+
+    document.querySelectorAll('#listGrid').forEach((list, itemIndex) => {
+        
+        while (listGrid.firstChild) {
+            listGrid.removeChild(listGrid.firstChild);
+          }
     });
-    console.log('display has been refreshed');
+    console.log('display has been refreshed'.toUpperCase());
 };
 
 const createListeners = (function() {
+    // const lists = document.querySelectorAll("[class^='list']");
+    
     const startListListeners = function() {
-        console.log(document.querySelectorAll("[class^='list']"));
-        document.querySelectorAll("[class^='list']").forEach((list, listIndex, listArray) => {
-            list.addEventListener('click', function start() {   // 
-                console.log(list);
+        let listIndex;
+        
+        listGrid.addEventListener('click', clickList, false);
+
+        // for (let index = 0; index < listGrid.children.length; index++) {
+        //     listGrid.children[index].onclick = function() {
+        //         console.log(index);
+        //         listIndex = index;
+        //         console.log(`listIndex: ${listIndex}`);
+        //     }
+        // }
+
+        function clickList(e) {
+            let targetIndex = '';
+            if (e.target.className === 'newList' && e.target !== e.currentTarget) {
+                console.log('NEWWWW LISTTTT');
+            } else if (e.target !== e.currentTarget) {   // click the child of a parent node
+                targetIndex = String(e.target.className).substr(4,1);
+                console.log(`targetIndex is: ${targetIndex}`);
+                console.log(e.target);
                 refreshDisplay();
                 // createDisplay();
-                // displayListGrid();
-                // displayItems(listIndex);
-            });
-        });
-    };   
+                displayListGrid();
+                displayItems(targetIndex);
+            }
+        e.stopPropagation();
+        }
+    }
+    
+    // const startListListeners = function() {
+    //     console.log(document.querySelectorAll("[class^='list']"));
+    //     document.querySelectorAll("[class^='list']").forEach((list, listIndex, listArray) => {
+    //         list.addEventListener('click', function listClicks() {   
+    //             console.log(list);
+    //             refreshDisplay();
+    //             // createDisplay();
+    //             displayListGrid();
+    //             displayItems(listIndex);
+    //         });
+    //     });
+    // };   
     return {
         startListListeners
     };
@@ -119,6 +155,3 @@ createDisplay();
 displayListGrid();
 displayItems(0);
 createListeners.startListListeners();
-
-
-
