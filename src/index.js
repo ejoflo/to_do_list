@@ -161,6 +161,15 @@ const initList = (function() {   // initializes app with a default list
     masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Xbox One'));
     masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('PlayStation 4'));
     masterList.listArray[2].items = masterList.listArray[2].addItem(itemFactory('Oculus Rift'));
+
+    // Initialize Vacation Agenda
+    masterList.addNewList('Vacation Itinerary');
+    masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Check out music venue', 'Find out what bands are playing', '7/21', true, false));
+    masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Eat at new pizza spot', 'I heard their combo is dope', '7/22', true, false));
+    masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Visit the old landmark', 'Located by the dog park', '7/23', true, false));
+    masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Shop at the antique store', 'Look for the wooden keychains', '7/24', true, false));
+    masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Try the artisan coffee', 'Jacob said to get the nitro brew. If Janet is working, ask her for the ultra craft cold brew.', '7/25', true, false));
+    masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Pack up your stuff :(', 'Not looking forward to leaving', '7/26', true, false));
 })();
 
 console.log(masterList.getLists());

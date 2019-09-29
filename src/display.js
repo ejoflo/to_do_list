@@ -5,8 +5,10 @@ const itemsGrid = document.createElement('div');
 const blankItem = document.createElement('p');
 const newItemBtn = document.createElement('button');
 const newListBtn = document.createElement('p');
+const newListInput = document.createElement('input');
+const newListInputBtn = document.createElement('button');
 
-
+// creates html elements for the lists and items
 const createDisplay = function() {
     main.setAttribute('id', 'main');
     listGrid.setAttribute('id', 'listGrid');
@@ -15,11 +17,48 @@ const createDisplay = function() {
     content.appendChild(main);
     main.appendChild(listGrid);
     main.appendChild(itemsGrid);
-}
+};
+
+// creates an input box when clicking + New List
+const displayNewListInput = function() {
+    newListInput.setAttribute('type', 'text');   
+    newListInput.classList.add(`newListInput`);
+    newListInput.setAttribute('name', 'newListName');
+    newListInput.setAttribute('size', '10');
+    newListInput.setAttribute('maxlength', '30');
+
+    listGrid.removeChild(listGrid.firstChild);
+    listGrid.insertAdjacentElement('afterbegin', newListInput);   // replace + New List with a New List input box
+    
+    newListInput.insertAdjacentElement('afterend', newListInputBtn);   // create a confirmation button next to New List input
+    newListInputBtn.classList.add('newListInputBtn');
+    newListInputBtn.textContent = '+';
+    
+    newListInput.focus();
+    // create two buttons: confirm / cancel
+    // confirm adds the new list then
+        // reverts the new list element
+    // cancel clears the new list name
+        // reverts the new list element
+};
+
+const appendNewList = function() {
+    const newListToAdd = document.getElementsByClassName('newListInput');
+    const newListName = newListToAdd.newListName;
+    let newNameOfList = newListName.value;
+
+    return newNameOfList;
+};
+
+// creates and displays the + New List button
+const displayNewListButton = function() {
+    listGrid.insertAdjacentElement('afterbegin', newListBtn);
+    newListBtn.classList.add(`newList`);
+    newListBtn.textContent = '+ New List';
+};
 
 const displayListGrid = function() {
-    listGrid.appendChild(newListBtn).classList.add(`newList`);
-    newListBtn.textContent = '+ New List';
+    displayNewListButton();
 
     masterList.listArray.forEach((list, index, theListArray) => {
         listGrid.appendChild(document.createElement('p')).classList.add(`list${index}`);
@@ -27,13 +66,13 @@ const displayListGrid = function() {
     });
 };
 
-const displayItems = function(listIndex) {
+const displayItemsGrid = function(listIndex) {   // display the current list's items
     document.querySelector(`.list${listIndex}`).classList.add('currentList');   // highlight the current selected list
 
     itemsGrid.appendChild(newItemBtn);  // create a new item button
-    newItemBtn.classList.add(`newItem`);
+    newItemBtn.classList.add(`newItemButton`);
     newItemBtn.textContent = '+';
-    itemsGrid.appendChild(blankItem).classList.add(`item`);
+    itemsGrid.appendChild(blankItem).classList.add(`newItem`);   // create a new blank item
 
     masterList.listArray[listIndex].items.forEach((item, index, itemsArray) => {   // render all items to the list
         itemsGrid.appendChild(document.createElement('button')).classList.add(`itemCheck${index}`);   // create a checkbox for every item
@@ -46,8 +85,6 @@ const displayItems = function(listIndex) {
         document.querySelector(`.item${index}`).appendChild(document.createElement('p')).classList.add(`note${index}`);   // creates a <p> element with class "note" for every item
         document.querySelector(`.note${index}`).textContent = `${item.note}`;
         }       
-
-        // document.querySelector(`.item${index}`).insertAdjacentHTML('afterend', '<a href="/home" class="active">Home</a>');
     });
 };
 
@@ -92,15 +129,12 @@ const refreshDisplay = function() {   // wipe the lists and items grids clean
             listGrid.removeChild(listGrid.firstChild);
           }
     });
-    console.log('display has been refreshed'.toUpperCase());
 };
 
 const createListeners = (function() {
     // const lists = document.querySelectorAll("[class^='list']");
     
     const startListListeners = function() {
-        let listIndex;
-        
         listGrid.addEventListener('click', clickList, false);
 
         // for (let index = 0; index < listGrid.children.length; index++) {
@@ -112,17 +146,42 @@ const createListeners = (function() {
         // }
 
         function clickList(e) {
-            let targetIndex = '';
-            if (e.target.className === 'newList' && e.target !== e.currentTarget) {
-                console.log('NEWWWW LISTTTT');
-            } else if (e.target !== e.currentTarget) {   // click the child of a parent node
-                targetIndex = String(e.target.className).substr(4,1);
-                console.log(`targetIndex is: ${targetIndex}`);
+            
+            const getTargetIndex = function(listElement) {
+                let targetIndex = '';
+
+                if (listElement) {
+                    targetIndex = String(listElement).substr(4,1);
+                } else {
+                    targetIndex = String(e.target.className).substr(4,1);
+                }
+                
+                // if (targetIndex === '') {
+                //     targetIndex = String(e.target.className).substr(4,1);
+                // } else {
+                //     targetIndex = String(listElement).substr(4,1);
+                // }
+                
+                return targetIndex;
+            };
+            
+            if (e.target.className === 'newList' && e.target !== e.currentTarget) {   // click the "new list" button
+                console.log('RUN displayNewListInput FUNCTION'); // run displayNewListInput function
+                displayNewListInput();
+                // listGrid.removeEventListener('click', clickList);
+            
+            } else if (e.target !== e.currentTarget && e.target.className !== 'newListInput' && e.target.className !== 'newListInputBtn') {   // click the child of a parent node
+                console.log(`targetIndex is: ${getTargetIndex()}`);
                 console.log(e.target);
                 refreshDisplay();
-                // createDisplay();
                 displayListGrid();
-                displayItems(targetIndex);
+                displayItemsGrid(getTargetIndex());
+            
+            } else if (e.target.className === 'newListInputBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
+                masterList.addNewList(appendNewList());                
+                refreshDisplay();
+                displayListGrid();
+                displayItemsGrid(getTargetIndex(listGrid.lastChild.className));
             }
         e.stopPropagation();
         }
@@ -136,22 +195,26 @@ const createListeners = (function() {
     //             refreshDisplay();
     //             // createDisplay();
     //             displayListGrid();
-    //             displayItems(listIndex);
+    //             displayItemsGrid(listIndex);
     //         });
     //     });
     // };   
+
     return {
         startListListeners
     };
 })();
 
-// create the header
-const appHeader = document.createElement('h1');
-appHeader.textContent = 'DO IT.';
-content.insertBefore(appHeader, main.childNodes[0]);
+const initDisplay = (() => {
+    // create the header
+    const appHeader = document.createElement('h1');
+    appHeader.textContent = '☑☑☑';
+    content.insertBefore(appHeader, main.childNodes[0]);
 
-// document.body.insertAdjacentHTML('beforebegin', '<center><h1>☑ DOOO EEEET.</h1><center>');  // change or delete this later
-createDisplay();
-displayListGrid();
-displayItems(0);
-createListeners.startListListeners();
+    // document.body.insertAdjacentHTML('beforebegin', '<center><h1>☑ DOOO EEEET.</h1><center>');  // change or delete this later
+    createDisplay();
+    displayListGrid();
+    displayItemsGrid(0);
+    createListeners.startListListeners();
+})();
+
