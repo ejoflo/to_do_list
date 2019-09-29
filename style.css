@@ -12,27 +12,31 @@ body {
 }
 
 h1 {
+    font-size: 40pt;
     padding: 20px;
     text-align: center;
     margin: 0 auto;
     color: rgb(92, 190, 255);
 }
 
+#content {
+    margin: 0 auto;
+}
+
 #main {
     display: grid;
     gap: 5px;
-    grid-template-columns: 150px 400px;
-    /* background-color: rgb(39, 37, 37); */
-    /* border: 1px solid white; */
+    grid-template-columns: auto 400px;
+    align-items: start;
     justify-content: center;
 }
 
 #listGrid {
     display: grid;
-    /* grid-template-columns: auto; */
-    height: auto;
-    background-color: rgb(17, 10, 13);
-    border: 1px solid rgb(255, 54, 154);
+    grid-template-rows: 40px;
+    grid-template-columns: 1fr 40px;
+    background-color: rgb(54, 15, 32);
+    border: .05em solid rgb(255, 54, 154);
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     padding: 10px;
@@ -40,39 +44,88 @@ h1 {
     align-items: start;
 }
 
-.newList {
-    font-size: 14pt;
-    font-weight: bold;
-    height: 25px;
-    background-color: rgb(54, 6, 36);
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    /* border: 1px solid rgb(68, 13, 36); */
-}
-
-.currentList {
-    font-size: 14pt;
-    font-weight: bold;
-    color: rgb(255, 54, 154);
-}
-
 #itemsGrid {
     display: grid;
-    grid-template-columns: 40px auto;
-    background-color: rgb(2, 21, 31);
-    border: 1px solid rgb(71, 136, 156);
+    grid-template-rows: 1fr;
+    grid-template-columns: 40px 1fr;
+    background-color: rgb(11, 47, 66);
+    border: 1px solid rgb(16, 86, 107);
     /* border-top: 1px solid rgb(71, 136, 156);
     border-left: 1px solid rgb(71, 136, 156);
     border-bottom: 1px solid rgb(71, 136, 156); */
     border-radius: 10px;
 }
-.newItem {
+
+.newList {
+    display: grid;
+    grid-column: 1 / 2;
+    font-size: 14pt;
+    font-weight: bold;
+    height: 35px;
+    background-color: rgb(26, 2, 16);
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    padding-top: 10px;
+    align-self: center;
+}
+
+.newList:hover {
+    color: rgb(255, 0, 149);
+}
+
+.newListInput {
+    font-size: 14pt;
+    height: 30px;
+    padding-left: 5px;
+    color: white;
+    background-color: black;
+    border: 2px solid rgb(255, 150, 241);;
+    border-radius: 5px;
+    align-self: center;
+}
+
+.newListInput:focus {
+    outline: none;
+}
+
+.newListInputBtn {
+    display: grid;
+    font-size: 25px;
+    vertical-align: middle;
+    line-height: 0px;
+    width: 25px;
+    height: 25px;
+    grid-column: 2 / 3;
+    /* padding: 10px; */
+    color:white;
+    background-color: black;
+    border: 2px solid rgb(255, 54, 154);
+    align-self: center;
+    justify-self: center;
+    cursor: pointer;
+    outline: none;
+}
+
+.newListInputBtn:hover {
+    color: rgb(255, 54, 154);
+}
+
+.currentList {
+    font-size: 14pt;
+    font-weight: bold;
+    height: 35px;
+    color: rgb(11, 218, 255);
+    padding-top: 10px;
+    outline-color: rgb(255, 54, 154);
+}
+
+
+.newItemButton {
     display: grid;
     grid-column: 1 / 2;
     width: 40px;
     height: 40px;
     font-size: 25pt;
-    text-align: middle;
     line-height: 0%;
     border: 2px solid rgb(54, 208, 255);
     color: white;
@@ -81,8 +134,24 @@ h1 {
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 0px;
-    align-self: center;
+    /* align-self: center; */
     justify-self: start;
+}
+
+.newItem {
+    display: grid;
+    /* grid-row: 20px; */
+    grid-column: 2 / 3;
+    height: 50px;
+    padding-top: 10px;
+    padding-right: 3px;
+    padding-bottom: 10px;
+    padding-left: 2px;
+    border-bottom: 2px solid rgb(9, 83, 105);
+    border-top-left-radius: 0px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 0px;
 }
 
 button[class^="itemCheck"] {
@@ -103,17 +172,27 @@ button[class^="itemCheck"] {
 
 p[class^="list"] {
     display: grid;
+    grid-column: 1 / 2;
     font-size: 14pt;
     font-weight: bold;
-    height: 25px;
+    height: 35px;
+    padding-top: 10px;
     border-bottom: 1px solid rgb(109, 20, 57);
 }
 
+p[class^="list"]:hover {
+    color: rgb(255, 0, 149);
+}
 p[class^="item"] {
     display: grid;
+    /* grid-row: 20px; */
     grid-column: 2 / 3;
-    padding: 10px;
-    border-bottom: 1px solid rgb(54, 208, 255);
+    /* height: 50px; */
+    padding-top: 10px;
+    padding-right: 3px;
+    padding-bottom: 10px;
+    padding-left: 2px;
+    border-bottom: 1px solid rgb(63, 166, 197);
     border-top-left-radius: 0px;
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
@@ -123,4 +202,5 @@ p[class^="item"] {
 p[class^="note"] {
     font-size: 10pt;
     color: rgb(255, 0, 149);
+    align-self: end;
 }
