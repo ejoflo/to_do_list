@@ -25,7 +25,7 @@ h1 {
 
 #main {
     display: grid;
-    gap: 5px;
+    grid-column-gap: 10px;
     grid-template-columns: auto 400px;
     align-items: start;
     justify-content: center;
@@ -34,7 +34,8 @@ h1 {
 #listGrid {
     display: grid;
     grid-template-rows: 40px;
-    grid-template-columns: 1fr 40px;
+    grid-template-columns: 1fr auto auto;
+    grid-column-gap: 5px;
     background-color: rgb(54, 15, 32);
     border: .05em solid rgb(255, 54, 154);
     border-top-right-radius: 10px;
@@ -90,13 +91,12 @@ h1 {
 
 .newListInputBtn {
     display: grid;
+    grid-column: 2 / 3;
     font-size: 25px;
     vertical-align: middle;
     line-height: 0px;
     width: 25px;
     height: 25px;
-    grid-column: 2 / 3;
-    /* padding: 10px; */
     color:white;
     background-color: black;
     border: 2px solid rgb(255, 54, 154);
@@ -107,6 +107,69 @@ h1 {
 }
 
 .newListInputBtn:hover {
+    color: rgb(255, 54, 154);
+}
+
+.newListInputCancelBtn {
+    display: grid;
+    grid-column: 3 / 4;
+    font-size: 25px;
+    vertical-align: middle;
+    line-height: 0px;
+    width: 25px;
+    height: 25px;
+    color:white;
+    background-color: black;
+    border: 2px solid rgb(255, 54, 154);
+    align-self: center;
+    justify-self: center;
+    cursor: pointer;
+    outline: none;
+}
+
+.newListInputCancelBtn:hover {
+    color: rgb(255, 54, 154);
+}
+
+button[class^="listEditBtn"] {
+    display: grid;
+    grid-column: 2 / 3;
+    font-size: 25px;
+    vertical-align: middle;
+    line-height: 0px;
+    width: 25px;
+    height: 25px;
+    color:white;
+    background-color: black;
+    border: 2px solid rgb(255, 54, 154);
+    align-self: center;
+    justify-self: center;
+    cursor: pointer;
+    outline: none;
+}
+
+button[class^="listEditBtn"]:hover {
+    color: rgb(255, 54, 154);
+}
+
+button[class^="listDeleteBtn"] {
+    display: grid;
+    grid-column: 3 / 4;
+    font-size: 25px;
+    vertical-align: middle;
+    line-height: 0px;
+    width: 25px;
+    height: 25px;
+    color:white;
+    background-color: black;
+    border: 2px solid rgb(255, 54, 154);
+    align-self: center;
+    justify-self: center;
+    cursor: pointer;
+    outline: none;
+}
+
+button[class^="listDeleteBtn"]:hover {
     color: rgb(255, 54, 154);
 }
 
