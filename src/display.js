@@ -2,11 +2,6 @@ const content = document.getElementById('content');
 const main = document.createElement('div');
 const listGrid = document.createElement('div');
 const itemsGrid = document.createElement('div');
-const blankItem = document.createElement('p');
-const newItemBtn = document.createElement('button');
-const newListBtn = document.createElement('p');
-const newListInput = document.createElement('input');
-const newListInputBtn = document.createElement('button');
 
 // creates html elements for the lists and items
 const createDisplay = function() {
@@ -21,6 +16,10 @@ const createDisplay = function() {
 
 // creates an input box when clicking + New List
 const displayNewListInput = function() {
+    const newListInput = document.createElement('input');
+    const newListInputBtn = document.createElement('button');
+    const newListInputCancelBtn = document.createElement('button');
+
     newListInput.setAttribute('type', 'text');   
     newListInput.classList.add(`newListInput`);
     newListInput.setAttribute('name', 'newListName');
@@ -33,13 +32,12 @@ const displayNewListInput = function() {
     newListInput.insertAdjacentElement('afterend', newListInputBtn);   // create a confirmation button next to New List input
     newListInputBtn.classList.add('newListInputBtn');
     newListInputBtn.textContent = '+';
+
+    newListInputBtn.insertAdjacentElement('afterend', newListInputCancelBtn);   // create a confirmation button next to New List input
+    newListInputCancelBtn.classList.add('newListInputCancelBtn');
+    newListInputCancelBtn.textContent = 'x';
     
     newListInput.focus();
-    // create two buttons: confirm / cancel
-    // confirm adds the new list then
-        // reverts the new list element
-    // cancel clears the new list name
-        // reverts the new list element
 };
 
 const appendNewList = function() {
@@ -52,9 +50,29 @@ const appendNewList = function() {
 
 // creates and displays the + New List button
 const displayNewListButton = function() {
+    const newListBtn = document.createElement('p');
+
     listGrid.insertAdjacentElement('afterbegin', newListBtn);
     newListBtn.classList.add(`newList`);
     newListBtn.textContent = '+ New List';
+};
+
+const displayListButtons = function() {
+    const lists = document.querySelectorAll("[class^='list']");;
+    const listEditBtn = document.createElement('button');
+    const listDeleteBtn = document.createElement('button');    
+
+    lists.forEach((list, listIndex) => {
+        console.log(lists[0]);
+        lists[listIndex].insertAdjacentElement('afterend', document.createElement('button'));   // create an edit button next to current list
+        lists[listIndex].nextSibling.classList.add(`listEditBtn${listIndex}`);
+        lists[listIndex].nextSibling.textContent = 'E';
+        
+        lists[listIndex].nextSibling.insertAdjacentElement('afterend', document.createElement('button'));   // create a delete button next to edit button
+        lists[listIndex].nextSibling.nextSibling.classList.add(`listDeleteBtn${listIndex}`);
+        lists[listIndex].nextSibling.nextSibling.textContent = 'X';
+
+    });
 };
 
 const displayListGrid = function() {
@@ -66,9 +84,15 @@ const displayListGrid = function() {
     });
 };
 
-const displayItemsGrid = function(listIndex) {   // display the current list's items
+const highlightList = function(listIndex) {
     document.querySelector(`.list${listIndex}`).classList.add('currentList');   // highlight the current selected list
+}
 
+// display the current list's items
+const displayItemsGrid = function(listIndex) {   
+    const newItemBtn = document.createElement('button');
+    const blankItem = document.createElement('p');
+    
     itemsGrid.appendChild(newItemBtn);  // create a new item button
     newItemBtn.classList.add(`newItemButton`);
     newItemBtn.textContent = '+';
@@ -117,14 +141,12 @@ const newItemDOM = function() {
 
 const refreshDisplay = function() {   // wipe the lists and items grids clean
     document.querySelectorAll('#itemsGrid').forEach((item, itemIndex) => {
-        
         while (itemsGrid.firstChild) {
             itemsGrid.removeChild(itemsGrid.firstChild);
         }
     });
 
     document.querySelectorAll('#listGrid').forEach((list, itemIndex) => {
-        
         while (listGrid.firstChild) {
             listGrid.removeChild(listGrid.firstChild);
           }
@@ -133,8 +155,11 @@ const refreshDisplay = function() {   // wipe the lists and items grids clean
 
 const createListeners = (function() {
     // const lists = document.querySelectorAll("[class^='list']");
-    
+    let lastList = 'list0';   // store the last clicked list
+
     const startListListeners = function() {
+
+
         listGrid.addEventListener('click', clickList, false);
 
         // for (let index = 0; index < listGrid.children.length; index++) {
@@ -146,63 +171,51 @@ const createListeners = (function() {
         // }
 
         function clickList(e) {
-            
             const getTargetIndex = function(listElement) {
                 let targetIndex = '';
 
-                if (listElement) {
+                if (listElement) {   // checks if an index has been passed. if not, gets index from element click.
                     targetIndex = String(listElement).substr(4,1);
                 } else {
                     targetIndex = String(e.target.className).substr(4,1);
                 }
-                
-                // if (targetIndex === '') {
-                //     targetIndex = String(e.target.className).substr(4,1);
-                // } else {
-                //     targetIndex = String(listElement).substr(4,1);
-                // }
-                
                 return targetIndex;
             };
             
             if (e.target.className === 'newList' && e.target !== e.currentTarget) {   // click the "new list" button
-                console.log('RUN displayNewListInput FUNCTION'); // run displayNewListInput function
                 displayNewListInput();
-                // listGrid.removeEventListener('click', clickList);
-            
-            } else if (e.target !== e.currentTarget && e.target.className !== 'newListInput' && e.target.className !== 'newListInputBtn') {   // click the child of a parent node
-                console.log(`targetIndex is: ${getTargetIndex()}`);
-                console.log(e.target);
+                console.log(lastList);
+
+            } else if (e.target !== e.currentTarget && e.target.className !== 'newListInput' && e.target.className !== 'newListInputBtn' && e.target.className !== 'newListInputCancelBtn') {   // click the child of a parent node
+                lastList = e.target.className;
+                console.log(lastList);
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(getTargetIndex());
+                highlightList(getTargetIndex());                
             
             } else if (e.target.className === 'newListInputBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
+                console.log(lastList);
+                lastList = e.target.className;
                 masterList.addNewList(appendNewList());                
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(getTargetIndex(listGrid.lastChild.className));
+                highlightList(getTargetIndex(listGrid.lastChild.className));
+
+
+            } else if (e.target.className === 'newListInputCancelBtn' && e.target !== e.currentTarget) {   // click the "cancel new list" button           
+                console.log(`cancel: ${lastList}`);
+                // lastList = 'list0';
+                refreshDisplay();
+                displayListGrid();
+                displayItemsGrid(getTargetIndex(lastList));
+                highlightList(getTargetIndex(lastList));
             }
         e.stopPropagation();
         }
-    }
-    
-    // const startListListeners = function() {
-    //     console.log(document.querySelectorAll("[class^='list']"));
-    //     document.querySelectorAll("[class^='list']").forEach((list, listIndex, listArray) => {
-    //         list.addEventListener('click', function listClicks() {   
-    //             console.log(list);
-    //             refreshDisplay();
-    //             // createDisplay();
-    //             displayListGrid();
-    //             displayItemsGrid(listIndex);
-    //         });
-    //     });
-    // };   
-
-    return {
-        startListListeners
-    };
+    } 
+    return { startListListeners };
 })();
 
 const initDisplay = (() => {
@@ -211,10 +224,11 @@ const initDisplay = (() => {
     appHeader.textContent = '☑☑☑';
     content.insertBefore(appHeader, main.childNodes[0]);
 
-    // document.body.insertAdjacentHTML('beforebegin', '<center><h1>☑ DOOO EEEET.</h1><center>');  // change or delete this later
     createDisplay();
     displayListGrid();
+    displayListButtons();
     displayItemsGrid(0);
+    highlightList(0);
     createListeners.startListListeners();
 })();
 
