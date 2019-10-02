@@ -69,7 +69,7 @@ const displayListButtons = function() {
 // [class^="listDeleteBtn"]
 
     listSettings.forEach((list, listIndex) => {   // create edit and delete buttons next to each list
-        console.log(list);
+        // console.log(list);
         list.insertAdjacentElement('afterend', document.createElement('button'));
         list.nextSibling.classList.add(`listEditBtn${listIndex}`);
         list.nextSibling.textContent = 'E';
@@ -89,12 +89,13 @@ const displayListGrid = function() {
     });
 
     const listSettings = document.querySelectorAll("[class^='list']");
+    const settingsSymbol = '\u{22EE}'; // the ellipsis: ⋮
 
     listSettings.forEach((list, listIndex) => {   // create a settings button next to each list
-        console.log(list);
+        // console.log(list);
         list.insertAdjacentElement('afterend', document.createElement('button')); 
         list.nextSibling.classList.add(`listSettingsBtn${listIndex}`);
-        list.nextSibling.textContent = '⋮';
+        list.nextSibling.textContent = settingsSymbol;
     });
 };
 
@@ -169,7 +170,7 @@ const refreshDisplay = function() {   // wipe the listSettings and items grids c
 
 const createListeners = (function() {
     // const listSettings = document.querySelectorAll("[class^='list']");
-    let lastList = 'list0';   // store the last clicked list
+    let lastClickedList = 0;   // store the last clicked list
     let listSettingBtnClicked;
 
     const startListListeners = function() {
@@ -187,93 +188,31 @@ const createListeners = (function() {
 
         const getTargetIndex = function(event, listElement) {   // return the index of a clicked element
             let targetIndex = '';
-
-            if (listElement && listElement.indexOf('currentList') === -1) {   // checks if an index has been passed. if not, gets index from element click.
-                console.log(listElement.replace(/[^0-9]/g,''));
-                console.log('The element passed was not a current list.');
-                console.log(`listElement: ${listElement}`);
-                
-                // targetIndex = String(listElement).substr((listElement.length - 1), 1);
+            
+            // checks if an index has been passed. if not, gets index from element click.
+            if (listElement && listElement.indexOf('currentList') === -1) {       
                 targetIndex = String(listElement).replace(/[^0-9]/g,'');
             
-            } else if (listElement && listElement.indexOf('currentList') > -1) {   // checks if an index has been passed and if it is the current list
-                console.log ('The element/variable passed was a current list.');
-                console.log(`listElement: ${listElement}`);
-                
-                // targetIndex = String(listElement).substr(4,1);
+            // checks if an index has been passed and if it is the current list
+            } else if (listElement && listElement.indexOf('currentList') > -1) {
                 targetIndex = String(listElement).replace(/[^0-9]/g,'');
             
             } else if (event.target.className.indexOf('currentList') > -1) {
-                console.log(`The clicked element was a current list.`);
-                console.log (`e.target.className: ${event.target.className}`);
-                
-                // targetIndex = String(e.target.className).substr(4,1);
                 targetIndex = String(event.target.className).replace(/[^0-9]/g,'');
 
             } else {
-                console.log(`Everything else clicked. ${String(event.target.className).substr((event.target.className.length - 1),1)}`);
-                console.log (`event.target.className: ${event.target.className}`);
-
-                // targetIndex = String(e.target.className).substr((e.target.className.length - 1), 1);
                 targetIndex = String(event.target.className).replace(/[^0-9]/g,'');
             }
-            return targetIndex;
+            
+            return +targetIndex;
         };
         
-        // function clickListGrid(e) {
-        //     if (e.target.className === 'newList' && e.target !== e.currentTarget) {   // click the "new list" button
-        //         // console.log(`Clicked the NEW list button / lastList: ${lastList}`);
-        //         displayNewListInput();
-        //         // console.log(`lastList: ${lastList}`);          
-
-        //     } else if (e.target.className === 'newListInputBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
-        //         // console.log(`Clicked the ADD new list button / lastList: ${lastList}`);
-        //         // console.log(listGrid.lastChild.className);
-        //         // lastList = e.target.className;
-        //         document.querySelector('.newListInput').focus();
-
-        //         if (appendNewList() !== false) {
-        //             // console.log(`appendNewList is not blank. / displayItemsGrid with index of ${listGrid.lastChild.className}`);
-        //             masterList.addNewList(appendNewList());
-        //             refreshDisplay();
-        //             displayListGrid();
-        //             displayItemsGrid(getTargetIndex(e, listGrid.lastChild.className));
-        //             highlightList(getTargetIndex(e, listGrid.lastChild.className));
-        //             lastList = listGrid.lastChild.className;
-        //         }
-
-        //     } else if (e.target.className === 'newListInputCancelBtn' && e.target !== e.currentTarget) {   // click the "cancel new list" button
-        //         // console.log(`Clicked the CANCEL new list button / lastList: ${lastList}`);
-        //         refreshDisplay();
-        //         displayListGrid();
-        //         displayItemsGrid(getTargetIndex(e, lastList));
-        //         highlightList(getTargetIndex(e, lastList));
-
-        //     } else if (e.target !== e.currentTarget && e.target.className !== 'newListInput' && e.target.className !== 'newListInputBtn' && e.target.className !== 'newListInputCancelBtn' && e.target.className.indexOf("listSettingsBtn") < 0 && e.target.className.indexOf("listDeleteBtn") < 0)  {   // click the child of a parent node
-        //         // console.log(`Clicked anywhere on the list grid / lastList: ${lastList}`);
-
-        //         console.log(e.target.className.indexOf("listSettingsBtn") > -1); // is this a list settings button?
-
-        //         lastList = e.target.className;
-        //         refreshDisplay();
-        //         displayListGrid();
-        //         displayItemsGrid(getTargetIndex(e));
-        //         highlightList(getTargetIndex(e));      
-        //     }
-        // e.stopPropagation();
-        // }
-    
         function clickListGrid(e) {
             const lists = listGrid.querySelectorAll("p[class^='list']");
             let listElements = Array.from(lists);   // put all .list elements in an array
 
-
             if (listElements.indexOf(e.target) >= 0 && e.target !== e.currentTarget) {   // click a list element
-                // console.log(listGrid.querySelectorAll("[class^='list']"));
-                console.log(listElements.indexOf(e.target));
-                console.log(listGrid.querySelectorAll("p[class^='list']"));
-
-                lastList = e.target.className;
+                lastClickedList = getTargetIndex(e, e.target.className);
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(getTargetIndex(e));
@@ -291,48 +230,78 @@ const createListeners = (function() {
                     displayListGrid();
                     displayItemsGrid(getTargetIndex(e, listGrid.lastChild.className));
                     highlightList(getTargetIndex(e, listGrid.lastChild.className));
-                    lastList = listGrid.lastChild.className;
+                    lastClickedList = getTargetIndex(e, listGrid.lastChild.className);
                 }
 
             } else if (e.target.className === 'newListInputCancelBtn' && e.target !== e.currentTarget) {   // click the "cancel new list" button
                 refreshDisplay();
                 displayListGrid();
-                displayItemsGrid(getTargetIndex(e, lastList));
-                highlightList(getTargetIndex(e, lastList));
+                displayItemsGrid(lastClickedList);
+                highlightList(lastClickedList);
             } 
+
             e.stopPropagation();
         }
 
         function clickListSettings(e) {
-            // const listSettings = document.querySelectorAll("[class^='listSettingsBtn']");
+            let deletedList;
 
-        if (listSettingBtnClicked === true) {   // if the list settings button was already clicked, close it
-            
-            if (e.target.className.indexOf('listDeleteBtn') > -1) {
-                console.log(e.target.className);
-                masterList.removeList(getTargetIndex(e));
-                // if the
-             
-            }
-            refreshDisplay();
-            displayListGrid();
-            displayItemsGrid(getTargetIndex(e, lastList));
-            highlightList(getTargetIndex(e, lastList));
-            listSettingBtnClicked = false;
-            console.log(listSettingBtnClicked);
-            
-        } else if (e.target.className.indexOf("listSettingsBtn") > -1 && e.target !== e.currentTarget) {   // is this a list settings button?
-                listSettingBtnClicked = true;
-                console.log(listSettingBtnClicked);
+            if (listSettingBtnClicked === true) {   // if the list settings button was already clicked, close it
+                
+                // press the delete list button and remove the list based on its index
+                if (e.target.className.indexOf('listDeleteBtn') > -1) {   
+                    deletedList = getTargetIndex(e);
+                    masterList.removeList(getTargetIndex(e));
+                }
+                
                 refreshDisplay();
                 displayListGrid();
-                displayListButtons();
-                displayItemsGrid(getTargetIndex(e, lastList));
-                highlightList(getTargetIndex(e, lastList));
+                
+                // if the index of the deleted list is higher than the currently highlighted list, subtract the index of the highlighted list (lastClickedList) - 1
+                if (getTargetIndex(e, e.target.className) > lastClickedList) {
+                    console.log ('WORKS: deleted list was lower on the list than the highlighted list');
+                }
 
-                // console.log(`Clicked the NEW list button / lastList: ${lastList}`);
-                // displayNewListInput();
-                // console.log(`lastList: ${lastList}`);          
+                // if the index of the deleted list is lower than the currently highlighted list, keep the index of the highlighted list intact
+                if (getTargetIndex(e, e.target.className) < lastClickedList) {
+                    console.log ('WORKS: deleted list was a higher on the list than the highlighted list');
+                    lastClickedList--;
+                }
+
+                // if the index of the deleted list was the last list on the page, and was highlighted, 
+                // highlight the last list on the page
+                if (deletedList > getTargetIndex(e, listGrid.lastChild.className) && getTargetIndex(e, e.target.className) === lastClickedList) {
+                    console.log ('this deleted list was last on the page');
+                    lastClickedList--;
+                } 
+
+                if (listGrid.lastChild.className === 'newList') {
+                    console.log('SHITS FUCKED')
+                    console.log({lastClickedList});
+                    console.log({deletedList});
+
+                    displayItemsGrid();
+
+                    listSettingBtnClicked = false;
+
+                }
+
+                console.log('you reached the end of the conditionals.');
+
+                displayItemsGrid(lastClickedList);
+                highlightList(lastClickedList);
+                listSettingBtnClicked = false;
+
+                
+            // is this a list settings button?
+            } else if (e.target.className.indexOf("listSettingsBtn") > -1 && e.target !== e.currentTarget) {
+                    listSettingBtnClicked = true;
+                    refreshDisplay();
+                    displayListGrid();
+                    displayListButtons();
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+
             }
             e.stopPropagation();
         }
@@ -345,7 +314,7 @@ const createListeners = (function() {
 const initDisplay = (() => {
     // create the header
     const appHeader = document.createElement('h1');
-    appHeader.textContent = '☑☑☑';
+    appHeader.textContent = 'DO.';
     content.insertBefore(appHeader, main.childNodes[0]);
 
     createDisplay();
