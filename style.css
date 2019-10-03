@@ -131,6 +131,21 @@ h1 {
     color: rgb(255, 54, 154);
 }
 
+.editListInput {
+    font-size: 14pt;
+    height: 30px;
+    padding-left: 5px;
+    color: white;
+    background-color: black;
+    border: 2px solid rgb(255, 150, 241);;
+    border-radius: 5px;
+    align-self: center;
+}
+
+.editListInput:focus {
+    outline: none;
+}
+
 button[class^="listSettingsBtn"] {
     display: grid;
     grid-column: 2 / 3;
