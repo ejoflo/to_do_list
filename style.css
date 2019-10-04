@@ -151,18 +151,23 @@ h1 {
 button[class^="editConfirmBtn"] {
     display: grid;
     grid-column: 3 / 4;
-    font-size: 25px;
+    font-size: 12px;
     vertical-align: middle;
     line-height: 0px;
     width: auto;
     height: 25px;
-    color:rgb(73, 255, 167);
+    padding: 5px;
+    color:white;
     background-color: black;
-    border: 2px solid rgb(54, 242, 255);
+    border: 2px solid rgb(255, 54, 154);
     align-self: center;
     justify-self: center;
     cursor: pointer;
     outline: none;
+}
+
+button[class^="editConfirmBtn"]:hover {
+    color:rgb(108, 255, 184);
 }
 
 button[class^="listSettingsBtn"] {
@@ -177,7 +182,6 @@ button[class^="listSettingsBtn"] {
     color:white;
     background-color: rgb(54, 15, 32);
     border: none;
-    /* border: 2px solid rgb(255, 54, 154); */
     align-self: center;
     justify-self: center;
     cursor: pointer;
