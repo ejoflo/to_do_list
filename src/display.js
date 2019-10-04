@@ -53,26 +53,20 @@ const appendNewList = function() {
     }
 };
 
-const displayEditListInput = function(listElement) {
+const displayEditListInput = function(listIndex) {
     const editListInput = document.createElement('input');
-    const editListInputBtn = document.createElement('button');
-    const editListInputCancelBtn = document.createElement('button');
-
-    const newListToAdd = document.getElementsByClassName('newListInput');
-    const newListName = newListToAdd.newListName;
-    let newNameOfList = newListName.value;
-
+    const listToEdit = document.querySelector(`.list${listIndex}`);
 
     editListInput.setAttribute('type', 'text');   
     editListInput.classList.add(`editListInput`);
     editListInput.setAttribute('name', 'editListName');
     editListInput.setAttribute('size', '10');
     editListInput.setAttribute('maxlength', '30');
+    
+    listToEdit.replaceWith(editListInput);
+    editListInput.value = masterList.listArray[listIndex].name;
+    editListInput.focus();
 
-    // someElement.replaceWith(otherElement);
-
-    listElement.replaceWith(editListInput);
-    // keep listSettingBtn*
     // replace listEditBtn*
     // replace listDeleteBtn*
 
@@ -80,10 +74,7 @@ const displayEditListInput = function(listElement) {
     // remove all elements with that index
     // insert the edit input box where the old element was
     
-
-    listGrid.removeChild(listGrid.firstChild);
-    listGrid.insertAdjacentElement('afterbegin', newListInput);   // replace + New List with a New List input box
-    
+/*
     newListInput.insertAdjacentElement('afterend', newListInputBtn);   // create a confirmation button next to New List input
     newListInputBtn.classList.add('newListInputBtn');
     newListInputBtn.textContent = '+';
@@ -91,8 +82,7 @@ const displayEditListInput = function(listElement) {
     newListInputBtn.insertAdjacentElement('afterend', newListInputCancelBtn);   // create a confirmation button next to New List input
     newListInputCancelBtn.classList.add('newListInputCancelBtn');
     newListInputCancelBtn.textContent = 'X';
-
-    newListInput.focus();
+*/
 
 
     // replace the "list to edit" with an input box containing its name
@@ -102,6 +92,32 @@ const displayEditListInput = function(listElement) {
     // clicking 
 
 };
+
+const updateListName = function() {
+    const listToEdit = document.getElementsByClassName('editListInput');
+    const updatedListName = listToEdit.editListName;   // the "name" property of the <input>
+
+    console.log(document.getElementsByClassName('editListInput'));
+
+    console.log(updatedListName);
+
+    let newNameOfList = updatedListName.value;
+
+    if (newNameOfList === '') {
+        alert("Name of list can't be empty.");
+        return false;
+    } else {
+        return newNameOfList;
+    }
+};
+
+const displayEditListButtons = function(listIndex) {
+    const editButton = document.createElement('button');
+
+    document.querySelector(`.listEditBtn${listIndex}`).remove();
+    document.querySelector(`.listSettingsBtn${listIndex}`).insertAdjacentElement('afterend', editButton).classList.add(`editConfirmBtn${listIndex}`);
+    document.querySelector(`.listSettingsBtn${listIndex}`).nextSibling.textContent = 'SAVE';
+}
 
 // creates and displays the + New List button
 const displayNewListButton = function() {
@@ -215,10 +231,10 @@ const refreshDisplay = function() {   // wipe the listSettings and items grids c
     });
 };
 
+let listSettingBtnClicked;
+
 const createListeners = (function() {
-    // const listSettings = document.querySelectorAll("[class^='list']");
     let lastClickedList = 0;   // store the last clicked list
-    let listSettingBtnClicked;
 
     const startListListeners = function() {
         listGrid.addEventListener('click', clickListGrid, false);
@@ -287,32 +303,42 @@ const createListeners = (function() {
                     highlightList(lastClickedList);
                 }
             }
-
             e.stopPropagation();
         }
 
         function clickListSettings(e) {   // handles all clicks on the List Settings button
             let deletedList;
 
-            if (listSettingBtnClicked === true) {   
+            if (listSettingBtnClicked === true) {
+                if (e.target.className.indexOf('listEditBtn') > -1 && e.target !== e.currentTarget) {   // press the edit list button    
+                    
+                    lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose edit button was clicked
+                    
+                    console.log(e.target.className);
 
-                // press the delete list button and remove the list based on its index
-                if (e.target.className.indexOf('listDeleteBtn') > -1) {   
+                    if (e.target.className !== `editConfirmBtn${lastClickedList}`) {
+                        displayEditListInput(lastClickedList);
+                        displayEditListButtons(lastClickedList);  // might be better to revert to changing the classname to editConfirmBtn${listIndex}.
+                        listSettingBtnClicked = true;   // if the list settings button was already clicked, close it
+                    } 
+
+                } else if (e.target.className === `editConfirmBtn${lastClickedList}` && e.target !== e.currentTarget) {
+                    lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose edit button was clicked
+                    masterList.listArray[lastClickedList].renameList(updateListName());
+                    
+                    refreshDisplay();
+                    displayListGrid();
+                    displayListButtons();
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+
+                    listSettingBtnClicked = true;   // if the list settings button was already clicked, close it
+
+                } else if (e.target.className.indexOf('listDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete list button and remove the list based on its index
                     deletedList = getTargetIndex(e);
                     masterList.removeList(getTargetIndex(e));
-                
-                // press the edit list button    
-                } else if (e.target.className.indexOf('listEditBtn') > -1) {
-                    lastClickedList = getTargetIndex(e, e.target.className);
-                    displayEditListInput(e.target);
-
-                    console.log(`you clicked the EDIT button of ${e.target.className}`);
-                    console.log({lastClickedList});
-
-                }
-                
-                refreshDisplay();
-                displayListGrid();
+                    refreshDisplay();
+                    displayListGrid();
 
                     if (listGrid.lastChild.className === 'newList') {   // all lists were deleted
                         
@@ -336,53 +362,39 @@ const createListeners = (function() {
                         highlightList(lastClickedList);
                     }
 
-/*                
-                    // if the index of the deleted list is lower than the currently highlighted list, keep the index of the highlighted list intact
-                    if (getTargetIndex(e, e.target.className) > lastClickedList) {
-                        console.log ('deleted list was LOWER on the list than the highlighted list');
-                        displayItemsGrid(lastClickedList);
-                        highlightList(lastClickedList);
-                    }
-
-                    // // if the index of the deleted list is higher than the currently highlighted list, subtract the index of the highlighted list (lastClickedList) - 1
-                    if (getTargetIndex(e, e.target.className) < lastClickedList) {
-                        console.log ('deleted list was a HIGHER on the list than the highlighted list');
-                        lastClickedList--;
-                        displayItemsGrid(lastClickedList);
-                        highlightList(lastClickedList);
-                    }
-
-                    // if the index of the deleted list was the last list on the page, and was highlighted, highlight the last list on the page
-                    if (deletedList > getTargetIndex(e, listGrid.lastChild.className) && getTargetIndex(e, e.target.className) === lastClickedList) {
-                        console.log ('this deleted list was last on the page');
-                        lastClickedList--;
-                        displayItemsGrid(lastClickedList);
-                        highlightList(lastClickedList);
-                    } 
-
-                    if (listGrid.lastChild.className === 'newList') {   // all lists were deleted
-                        console.log('SHITS FUCKED')
-                        console.log({lastClickedList});
-                        console.log({deletedList});
-
-                        displayItemsGrid();   // just show the "add item" button and empty item
-                    }
-*/
-
                 console.log('you reached the end of the conditionals.');
 
                 listSettingBtnClicked = false;   // if the list settings button was already clicked, close it
-                
-            // is this a list settings button?
-            } else if (e.target.className.indexOf("listSettingsBtn") > -1 && e.target !== e.currentTarget) {
-                    console.log('HERE!');
-                    listSettingBtnClicked = true;
+
+                } else if (e.target.className !== 'editListInput') {   // refresh the list if the list settings button was clicked
                     refreshDisplay();
                     displayListGrid();
-                    displayListButtons();
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
+                    listSettingBtnClicked = false;   // if the list settings button was already clicked, close it
+                }
+                
+            // refreshDisplay();
+            // displayListGrid();
+
+            // listSettingBtnClicked = false;   // if the list settings button was already clicked, close it
+                
+            // is this a list settings button?
+            // } else if (e.target.className.indexOf("listSettingsBtn") > -1 && e.target !== e.currentTarget) {
+            } else {   // if listSettingBtnClicked is
+                console.log('HERE!');
+
+                listSettingBtnClicked = true;
+                console.log({listSettingBtnClicked});
+                refreshDisplay();
+                displayListGrid();
+                displayListButtons();
+                displayItemsGrid(lastClickedList);
+                highlightList(lastClickedList);
             }
+
+            console.log('WE OUT');
+            console.log({listSettingBtnClicked});
 
             e.stopPropagation();
         }
@@ -395,7 +407,9 @@ const createListeners = (function() {
 const initDisplay = (() => {
     // create the header
     const appHeader = document.createElement('h1');
-    appHeader.textContent = 'DO.';
+    const checkMark = '\u{2713}'; // the ellipsis: ⋮
+
+    appHeader.textContent = `DO. ${checkMark}`;
     content.insertBefore(appHeader, main.childNodes[0]);
 
     createDisplay();
