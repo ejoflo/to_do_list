@@ -152,8 +152,11 @@ const initList = (function() {   // initializes app with a default list
     masterList.addNewList('Buy List');
     let buyInfo = itemFactory('Detergent', 'If possible, get Downy.');
     let moreBuyInfo = itemFactory('Kimchi Ramen', 'Look for extra spicy', '7/21', true, false);
+    let evenMoreBuyInfo = itemFactory('Soft Soap', 'Get the melon scented one', '10/25', true, false);
+
     masterList.listArray[1].items = masterList.listArray[1].addItem(buyInfo);
     masterList.listArray[1].items = masterList.listArray[1].addItem(moreBuyInfo);
+    masterList.listArray[1].items = masterList.listArray[1].addItem(evenMoreBuyInfo);
 
     // Initialize Wish List
     masterList.addNewList('Wish List');

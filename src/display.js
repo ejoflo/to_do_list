@@ -17,27 +17,55 @@ const createDisplay = function() {
 // creates an input box when clicking + New List
 const displayNewListInput = function() {
     const newListInput = document.createElement('input');
-    const newListInputBtn = document.createElement('button');
+    const newListInputConfirmBtn = document.createElement('button');
     const newListInputCancelBtn = document.createElement('button');
 
     newListInput.setAttribute('type', 'text');   
     newListInput.classList.add(`newListInput`);
     newListInput.setAttribute('name', 'newListName');
+    newListInput.setAttribute('placeholder', 'Name your list');
     newListInput.setAttribute('size', '10');
     newListInput.setAttribute('maxlength', '30');
 
     listGrid.removeChild(listGrid.firstChild);
     listGrid.insertAdjacentElement('afterbegin', newListInput);   // replace + New List with a New List input box
     
-    newListInput.insertAdjacentElement('afterend', newListInputBtn);   // create a confirmation button next to New List input
-    newListInputBtn.classList.add('newListInputBtn');
-    newListInputBtn.textContent = '+';
+    newListInput.insertAdjacentElement('afterend', newListInputConfirmBtn);   // create a confirmation button next to New List input
+    newListInputConfirmBtn.classList.add('newListInputConfirmBtn');
+    newListInputConfirmBtn.textContent = '+';
 
-    newListInputBtn.insertAdjacentElement('afterend', newListInputCancelBtn);   // create a confirmation button next to New List input
+    newListInputConfirmBtn.insertAdjacentElement('afterend', newListInputCancelBtn);   // create a cancel button next to confirm button
     newListInputCancelBtn.classList.add('newListInputCancelBtn');
     newListInputCancelBtn.textContent = 'X';
 
     newListInput.focus();
+};
+
+// creates an input box when clicking + New item
+const displayNewItemInput = function() {
+    const newItemInput = document.createElement('input');
+    const newItemInputConfirmBtn = document.createElement('button');
+    const newItemInputCancelBtn = document.createElement('button');
+    const newItemArea = document.querySelector('.newItem');
+
+
+    newItemInput.setAttribute('type', 'text');   
+    newItemInput.classList.add(`newItemInput`);
+    newItemInput.setAttribute('name', 'newItemTitle');
+    newItemInput.setAttribute('placeholder', 'Add your item here');
+    newItemInput.setAttribute('size', '10');
+    newItemInput.setAttribute('maxlength', '150');
+
+    newItemArea.replaceWith(newItemInput);
+    newItemInput.insertAdjacentElement('afterend', newItemInputConfirmBtn);   // replace + New Item with a New Item input box
+    newItemInputConfirmBtn.classList.add('newItemInputConfirmBtn');
+    newItemInputConfirmBtn.textContent = '+';
+
+    newItemInputConfirmBtn.insertAdjacentElement('afterend', newItemInputCancelBtn);   // create a cancel button next to confirm button
+    newItemInputCancelBtn.classList.add('newItemInputCancelBtn');
+    newItemInputCancelBtn.textContent = 'X';
+
+    newItemInput.focus();
 };
 
 // returns the new list name
@@ -48,9 +76,25 @@ const appendNewList = function() {
 
     if (newNameOfList === '') {
         alert("Name of list can't be empty.");
+        listGrid.firstChild.focus();   // put focus back on input box
         return false;
     } else {
         return newNameOfList;
+    }
+};
+
+// returns the new item title
+const appendNewItem = function() {
+    const newItemToAdd = document.getElementsByClassName('newItemInput');
+    const newItemTitle = newItemToAdd.newItemTitle;
+    let newTitleOfItem = newItemTitle.value;
+
+    if (newTitleOfItem === '') {
+        alert("Name of item can't be empty.");
+        itemsGrid.firstChild.nextSibling.focus();   // put focus back on input box
+        return false;
+    } else {
+        return newTitleOfItem;
     }
 };
 
@@ -216,11 +260,12 @@ const refreshDisplay = function() {
 const createListeners = (function() {
     let lastClickedList = 0;   // store the last clicked list
     let deletedList;
+    let addNewItemBtnClicked = false;
     let listSettingBtnClicked = false;
 
     const startListListeners = function() {
         listGrid.addEventListener('click', clickListGrid, false);
-        // listGrid.addEventListener('click', clickListSettings, false);
+        itemsGrid.addEventListener('click', clickItemGrid, false);
 
         const getTargetIndex = function(event, listElement) {   // return the index of a clicked element
             let targetIndex = '';
@@ -244,9 +289,6 @@ const createListeners = (function() {
             const lists = listGrid.querySelectorAll("p[class^='list']");
             let listElements = Array.from(lists);   // put all .list elements in an array
 
-            console.log(e.target);
-            console.log({listSettingBtnClicked});
-
             if (listElements.indexOf(e.target) >= 0 && e.target !== e.currentTarget) {   // click a list element
                 lastClickedList = getTargetIndex(e, e.target.className);
                 refreshDisplay();
@@ -257,8 +299,8 @@ const createListeners = (function() {
             } else if (e.target.className === 'newList' && e.target !== e.currentTarget) {   // click the "new list" button
                 displayNewListInput();
 
-            } else if (e.target.className === 'newListInputBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
-                document.querySelector('.newListInput').focus();
+            } else if (e.target.className === 'newListInputConfirmBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
+                // document.querySelector('.newListInput').focus();
 
                 if (appendNewList() !== false) {   // if the new list name is not empty
                     masterList.addNewList(appendNewList());
@@ -288,26 +330,15 @@ const createListeners = (function() {
                     lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose edit button was clicked
 
                     if (e.target.className !== `editSaveBtn${lastClickedList}`) {
-
-                        console.log('HERE?');
-
                         displayEditListInput(lastClickedList);
                         displayEditListButtons(lastClickedList);  // might be better to revert to changing the classname to editSaveBtn${listIndex}.
                         listSettingBtnClicked = true;
                     } 
 
                 } else if (e.target.className === `editSaveBtn${getTargetIndex(e, e.target.className)}` && e.target !== e.currentTarget) {
-
-                    console.log('HOW BOUT HERE?');
-
                     lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose edit button was clicked
-
                     masterList.listArray[lastClickedList].renameList(updateListName(lastClickedList));
-                    
                     lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose save button was clicked
-
-                    console.log ({lastClickedList});
-
                     refreshDisplay();
                     displayListGrid();
                     displayListButtons();
@@ -348,12 +379,35 @@ const createListeners = (function() {
                 refreshDisplay();
                 displayListGrid();
                 displayListButtons();
-
-                console.log({lastClickedList});
-                console.log({deletedList});
-
                 displayItemsGrid(lastClickedList);
                 highlightList(lastClickedList);
+            }
+            e.stopPropagation();
+        }
+
+        function clickItemGrid(e) {   // handles all clicks on the items
+            if (e.target.className === 'newItemButton' && addNewItemBtnClicked === false) {   // click on + new item button
+                addNewItemBtnClicked = true;
+                console.log('you clicked on the + new item button');
+                displayNewItemInput();
+            } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === true) {
+                if (appendNewItem() !== false) {   // if the new item name is not empty
+                    masterList.listArray[lastClickedList].items = masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()));
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+                    addNewItemBtnClicked = false;
+                }
+            }
+
+
+            if (e.target.className === `item${getTargetIndex(e, e.target.className)}`) {   // click on item
+                console.log(`you clicked on item ${getTargetIndex(e, e.target.className)}`);
+            }
+
+            if (e.target.className === `itemCheck${getTargetIndex(e, e.target.className)}`) {   // click on item checkbox
+                console.log(`you clicked on item checkbox ${getTargetIndex(e, e.target.className)}`);
             }
             e.stopPropagation();
         }
