@@ -131,7 +131,7 @@ h1 {
     color: rgb(255, 54, 154);
 }
 
-.editListInput {
+input[class^="editListInput"] {
     display: grid;
     grid-column: 1 / 2;
     font-size: 14pt;
@@ -144,14 +144,14 @@ h1 {
     align-self: center;
 }
 
-.editListInput:focus {
+input[class^="editListInput"]:focus {
     outline: none;
 }
 
-button[class^="editConfirmBtn"] {
+button[class^="editSaveBtn"] {
     display: grid;
     grid-column: 3 / 4;
-    font-size: 12px;
+    font-size: 12pt;
     vertical-align: middle;
     line-height: 0px;
     width: auto;
@@ -166,7 +166,7 @@ button[class^="editConfirmBtn"] {
     outline: none;
 }
 
-button[class^="editConfirmBtn"]:hover {
+button[class^="editSaveBtn"]:hover {
     color:rgb(108, 255, 184);
 }
 
@@ -195,11 +195,12 @@ button[class^="listSettingsBtn"]:hover {
 button[class^="listEditBtn"] {
     display: grid;
     grid-column: 3 / 4;
-    font-size: 25px;
+    font-size: 12pt;
     vertical-align: middle;
     line-height: 0px;
-    width: 25px;
+    width: auto;
     height: 25px;
+    padding: 5px;
     color:white;
     background-color: black;
     border: 2px solid rgb(255, 54, 154);
@@ -216,12 +217,12 @@ button[class^="listEditBtn"]:hover {
 button[class^="listDeleteBtn"] {
     display: grid;
     grid-column: 4 / 5;
-    font-size: 25px;
+    font-size: 12pt;
     vertical-align: middle;
     line-height: 0px;
     width: 25px;
     height: 25px;
-    color:white;
+    color: white;
     background-color: black;
     border: 2px solid rgb(255, 54, 154);
     align-self: center;
@@ -231,7 +232,7 @@ button[class^="listDeleteBtn"] {
 }
 
 button[class^="listDeleteBtn"]:hover {
-    color: rgb(255, 54, 154);
+    color:rgb(255, 2, 49);
 }
 
 .currentList {
