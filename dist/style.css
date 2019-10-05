@@ -67,7 +67,7 @@ input {
 #itemsGrid {
     display: grid;
     grid-template-rows: 1fr;
-    grid-template-columns: 40px 1fr auto;
+    grid-template-columns: 40px 1fr auto auto;
     background-color: rgb(11, 47, 66);
     border: 1px solid rgb(16, 86, 107);
     /* border-top: 1px solid rgb(71, 136, 156);
@@ -443,8 +443,9 @@ button[class^="itemCheck"] {
 }
 
 p[class^="item"] {
+    display: grid;
     /* grid-row: 20px; */
-    grid-column: 2 / 4;
+    grid-column: 2 / 3;
     /* height: 50px; */
     font-size: 12pt;
     padding-top: 10px;
@@ -459,9 +460,29 @@ p[class^="item"] {
 }
 
 p[class^="note"] {
+    /* grid-column: 2 / 3; */
+    display: inline-block;
     font-size: 10pt;
-    color: rgb(255, 0, 149);
+    font-weight: 100;
+    color: rgb(172, 240, 255);
     align-self: end;
+}
+
+p[class^="date"] {
+    /* grid-column: 2 / 3; */
+    display: inline-block;
+    font-size: 10pt;
+    font-weight: bold;
+    color: rgb(255, 68, 189);
+    align-self: end;
+}
+
+p[class^="priority"] {
+    grid-column: 3 / 4;
+    font-size: 20pt;
+    font-weight: bolder;
+    color: red;
+    align-self: center;
 }
 
 button[class^="itemSettingsBtn"] {

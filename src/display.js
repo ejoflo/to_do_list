@@ -197,6 +197,21 @@ const displayListButtons = function() {
     });
 };
 
+// creates item settings buttons
+const displayItemsButtons = function() {
+    const itemSettings = document.querySelectorAll("[class^='itemSettingsBtn']");
+
+    itemSettings.forEach((item, itemIndex) => {
+        item.insertAdjacentElement('afterend', document.createElement('button'));
+        item.nextSibling.classList.add(`itemEditBtn${itemIndex}`);
+        item.nextSibling.textContent = 'EDIT';
+        
+        item.nextSibling.insertAdjacentElement('afterend', document.createElement('button'));
+        item.nextSibling.nextSibling.classList.add(`itemDeleteBtn${itemIndex}`);
+        item.nextSibling.nextSibling.textContent = 'X';
+    });
+};
+
 // creates and fills the page with all lists
 const displayListGrid = function() {
     displayNewListButton();
@@ -225,7 +240,8 @@ const highlightList = function(listIndex) {
 const displayItemsGrid = function(listIndex) {   
     const newItemBtn = document.createElement('button');
     const blankItem = document.createElement('p');
-    const settingsSymbol = '\u{22EE}'; // the ellipsis: ⋮
+    const prioritySymbol = '\u{2691}';   // warning sign ⚠
+    const settingsSymbol = '\u{22EE}';   // the ellipsis: ⋮
     
     itemsGrid.appendChild(newItemBtn);  // create a new item button
     newItemBtn.classList.add(`newItemButton`);
@@ -236,16 +252,32 @@ const displayItemsGrid = function(listIndex) {
     masterList.listArray[listIndex].items.forEach((item, index, itemsArray) => {   // render all items to the list
         itemsGrid.appendChild(document.createElement('button')).classList.add(`itemCheck${index}`);   // create a checkbox for every item
         itemsGrid.appendChild(document.createElement('p')).classList.add(`item${index}`);   // create a <p> element with class "item" for every item
+        itemsGrid.appendChild(document.createElement('p')).classList.add(`priority${index}`);   // create a <p> element with the priority symbol
+
+
         itemsGrid.appendChild(document.createElement('button')).classList.add(`itemSettingsBtn${index}`);   // create an item settings button for every item
 
         document.querySelector(`.itemCheck${index}`).textContent = ``;
         document.querySelector(`.item${index}`).textContent = `${item.title}`;
+        document.querySelector(`.priority${index}`).textContent = prioritySymbol;
         document.querySelector(`.itemSettingsBtn${index}`).textContent = settingsSymbol;
 
-        if (item.note !== undefined) {   // creates a <p> element with class "note" for every item
+        console.log(item.date);
+
+        if (item.date !== undefined) {
+        document.querySelector(`.item${index}`).appendChild(document.createElement('p')).classList.add(`date${index}`);   
+        document.querySelector(`.date${index}`).textContent = `${item.date}`;
+        }
+
+        
+        if (item.date === undefined && item.note !== undefined) {   // creates a <p> element with class "note" for every item
         document.querySelector(`.item${index}`).appendChild(document.createElement('p')).classList.add(`note${index}`);   
         document.querySelector(`.note${index}`).textContent = `${item.note}`;
-        }       
+        } else if (item.date !== undefined && item.note !== undefined) {
+            console.log( document.querySelector('.date' + index));
+            document.querySelector('.date' + index).appendChild(document.createElement('p')).classList.add('note' + index);   
+            document.querySelector('.note' + index).textContent = `${item.note}`;
+        }   
     });
     }
 };
@@ -395,7 +427,9 @@ const createListeners = (function() {
         }
 
         function clickItemGrid(e) {   // handles all clicks on the items
-            if (e.target.className === 'newItemButton' && addNewItemBtnClicked === false) {   // click on + new item button
+            
+            // click on + new item button
+            if (e.target.className === 'newItemButton' && addNewItemBtnClicked === false) {
                 addNewItemBtnClicked = true;
                 console.log('you clicked on the + new item button');
                 displayNewItemInput();
@@ -412,12 +446,20 @@ const createListeners = (function() {
                 }
             }
 
-            if (e.target.className === `item${getTargetIndex(e, e.target.className)}`) {   // click on item
-                console.log(`you clicked on item ${getTargetIndex(e, e.target.className)}`);
+            // click on the item settings button
+            if (e.target.className === `itemSettingsBtn${getTargetIndex(e, e.target.className)}`) {
+
+            }
+
+            // click on the item
+            if (e.target.className === `item${getTargetIndex(e, e.target.className)}`) {
+                // console.log(`you clicked on item ${getTargetIndex(e, e.target.className)}`);
                 displayEditItemInput(lastClickedList, getTargetIndex(e, e.target.className));
             }
 
-            if (e.target.className === `itemCheck${getTargetIndex(e, e.target.className)}`) {   // click on item checkbox
+            // click on item checkbox
+            if (e.target.className === `itemCheck${getTargetIndex(e, e.target.className)}`) {   // if the item is unchecked
+                // make the item red/checked
                 console.log(`you clicked on item checkbox ${getTargetIndex(e, e.target.className)}`);
             }
             e.stopPropagation();
