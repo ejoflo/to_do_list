@@ -146,7 +146,7 @@ const initList = (function() {   // initializes app with a default list
     // Initialize My List
     masterList.addNewList('My List');
     masterList.listArray[0].items = masterList.listArray[0].addItem(itemFactory('To add a list item, click the + button.', 'This line is reserved for notes.', `Due: ${currentDate.getMonth()+1}/${currentDate.getDate()} `, false));
-    masterList.listArray[0].items = masterList.listArray[0].addItem(itemFactory('To create a list, click on the list icon.'));
+    masterList.listArray[0].items = masterList.listArray[0].addItem(itemFactory('To create a list, click on + New List.'));
 
     // Initialize Buy List
     masterList.addNewList('Buy List');

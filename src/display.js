@@ -36,36 +36,50 @@ const displayNewListInput = function() {
 
     newListInputConfirmBtn.insertAdjacentElement('afterend', newListInputCancelBtn);   // create a cancel button next to confirm button
     newListInputCancelBtn.classList.add('newListInputCancelBtn');
-    newListInputCancelBtn.textContent = 'X';
+    newListInputCancelBtn.textContent = 'x';
 
     newListInput.focus();
 };
 
 // creates an input box when clicking + New item
 const displayNewItemInput = function() {
-    const newItemInput = document.createElement('input');
-    const newItemInputConfirmBtn = document.createElement('button');
+    const newItemInputTitle = document.createElement('input');
+    const newItemInputFlagBtn = document.createElement('button');
     const newItemInputCancelBtn = document.createElement('button');
     const newItemArea = document.querySelector('.newItem');
 
+    newItemInputTitle.setAttribute('type', 'text');   // create a new item title input box
+    newItemInputTitle.classList.add(`newItemInput`);
+    newItemInputTitle.setAttribute('name', 'newItemTitle');
+    newItemInputTitle.setAttribute('placeholder', 'Add your item here');
+    newItemInputTitle.setAttribute('size', '10');
+    newItemInputTitle.setAttribute('maxlength', '150');
 
-    newItemInput.setAttribute('type', 'text');   
-    newItemInput.classList.add(`newItemInput`);
-    newItemInput.setAttribute('name', 'newItemTitle');
-    newItemInput.setAttribute('placeholder', 'Add your item here');
-    newItemInput.setAttribute('size', '10');
-    newItemInput.setAttribute('maxlength', '150');
+    newItemArea.replaceWith(newItemInputTitle);
+    newItemInputTitle.insertAdjacentElement('afterend', newItemInputFlagBtn);   // replace + New Item with a New Item input box
+    newItemInputFlagBtn.classList.add('newItemInputFlagBtn');
+    newItemInputFlagBtn.textContent = '!!!';
 
-    newItemArea.replaceWith(newItemInput);
-    newItemInput.insertAdjacentElement('afterend', newItemInputConfirmBtn);   // replace + New Item with a New Item input box
-    newItemInputConfirmBtn.classList.add('newItemInputConfirmBtn');
-    newItemInputConfirmBtn.textContent = '+';
-
-    newItemInputConfirmBtn.insertAdjacentElement('afterend', newItemInputCancelBtn);   // create a cancel button next to confirm button
+    newItemInputFlagBtn.insertAdjacentElement('afterend', newItemInputCancelBtn);   // create a cancel button next to confirm button
     newItemInputCancelBtn.classList.add('newItemInputCancelBtn');
     newItemInputCancelBtn.textContent = 'X';
 
-    newItemInput.focus();
+    newItemInputTitle.focus();
+};
+
+const displayNewItemInputNote = function() {
+    const newItemInputNote = document.createElement('input');
+
+    newItemInputNote.setAttribute('type', 'text');   // create a new item note input box
+    newItemInputNote.classList.add(`newItemInputNote`);
+    newItemInputNote.setAttribute('name', 'newItemNote');
+    newItemInputNote.setAttribute('placeholder', 'Add a note here');
+    newItemInputNote.setAttribute('size', '10');
+    newItemInputNote.setAttribute('maxlength', '150');
+
+    console.log(document.querySelector('.newItemInput'));
+    document.querySelector('.newItemInput').insertAdjacentElement('afterend', newItemInputNote);
+
 };
 
 // returns the new list name
@@ -86,15 +100,20 @@ const appendNewList = function() {
 // returns the new item title
 const appendNewItem = function() {
     const newItemToAdd = document.getElementsByClassName('newItemInput');
+    const newItemNoteToAdd = document.getElementsByClassName('newItemInputNote');    
     const newItemTitle = newItemToAdd.newItemTitle;
+    const newItemNote = newItemNoteToAdd.newItemNote;
     let newTitleOfItem = newItemTitle.value;
+    let newNoteOfItem = newItemNote.value;
+    let itemInfo = [newTitleOfItem, newNoteOfItem];
 
     if (newTitleOfItem === '') {
         alert("Name of item can't be empty.");
         itemsGrid.firstChild.nextSibling.focus();   // put focus back on input box
         return false;
+    
     } else {
-        return newTitleOfItem;
+        return itemInfo;
     }
 };
 
@@ -113,6 +132,22 @@ const displayEditListInput = function(listIndex) {
     editListInput.value = masterList.listArray[listIndex].name;
     editListInput.focus();
 };
+
+// creates an input box for editing an item title
+const displayEditItemInput = function(listIndex, itemIndex) {
+    const editItemInputTitle = document.createElement('input');
+    const itemToEdit = document.querySelector(`.item${itemIndex}`);
+
+    editItemInputTitle.setAttribute('type', 'text');   // create a new item title input box
+    editItemInputTitle.classList.add(`editItemInputTitle${itemIndex}`);
+    editItemInputTitle.setAttribute('name', 'editItemTitle');
+    editItemInputTitle.setAttribute('size', '10');
+    editItemInputTitle.setAttribute('maxlength', '150');
+    
+    itemToEdit.replaceWith(editItemInputTitle);
+    editItemInputTitle.value = masterList.listArray[listIndex].items[itemIndex].title;
+    editItemInputTitle.focus();
+}
 
 // returnes the edited list name
 const updateListName = function(listIndex) {
@@ -190,6 +225,7 @@ const highlightList = function(listIndex) {
 const displayItemsGrid = function(listIndex) {   
     const newItemBtn = document.createElement('button');
     const blankItem = document.createElement('p');
+    const settingsSymbol = '\u{22EE}'; // the ellipsis: ⋮
     
     itemsGrid.appendChild(newItemBtn);  // create a new item button
     newItemBtn.classList.add(`newItemButton`);
@@ -200,9 +236,11 @@ const displayItemsGrid = function(listIndex) {
     masterList.listArray[listIndex].items.forEach((item, index, itemsArray) => {   // render all items to the list
         itemsGrid.appendChild(document.createElement('button')).classList.add(`itemCheck${index}`);   // create a checkbox for every item
         itemsGrid.appendChild(document.createElement('p')).classList.add(`item${index}`);   // create a <p> element with class "item" for every item
+        itemsGrid.appendChild(document.createElement('button')).classList.add(`itemSettingsBtn${index}`);   // create an item settings button for every item
 
         document.querySelector(`.itemCheck${index}`).textContent = ``;
         document.querySelector(`.item${index}`).textContent = `${item.title}`;
+        document.querySelector(`.itemSettingsBtn${index}`).textContent = settingsSymbol;
 
         if (item.note !== undefined) {   // creates a <p> element with class "note" for every item
         document.querySelector(`.item${index}`).appendChild(document.createElement('p')).classList.add(`note${index}`);   
@@ -211,35 +249,6 @@ const displayItemsGrid = function(listIndex) {
     });
     }
 };
-
-/* input DOM example from Book project
-const newItemDOM = function() {
-    const form = document.querySelector('form');
-    const titleInput = form.titleInput;
-    const authorInput = form.authorInput;
-    const pagesInput = form.pagesInput;
-    const readYesInput = form.readYesInput;
-    
-    let newTitle = titleInput.value;
-    let newAuthor = authorInput.value;
-    let newPages = +pagesInput.value;
-    let newRead = readYesInput.checked;
-    let newBook;
-
-    if (newRead === true) {
-        newRead = 'Yes';
-    } else {
-        newRead = 'No';
-    }
-
-    newBook = new Book (newTitle, newAuthor, newPages, newRead);
-
-    addBookToLibrary(newBook);
-    clearLibrary();
-    render(myLibrary);
-    createListeners();
-};
-*/
 
 // wipe the list and items grids clean
 const refreshDisplay = function() {
@@ -390,9 +399,11 @@ const createListeners = (function() {
                 addNewItemBtnClicked = true;
                 console.log('you clicked on the + new item button');
                 displayNewItemInput();
+                displayNewItemInputNote();
+
             } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === true) {
                 if (appendNewItem() !== false) {   // if the new item name is not empty
-                    masterList.listArray[lastClickedList].items = masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()));
+                    masterList.listArray[lastClickedList].items = masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1]));
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
@@ -401,9 +412,9 @@ const createListeners = (function() {
                 }
             }
 
-
             if (e.target.className === `item${getTargetIndex(e, e.target.className)}`) {   // click on item
                 console.log(`you clicked on item ${getTargetIndex(e, e.target.className)}`);
+                displayEditItemInput(lastClickedList, getTargetIndex(e, e.target.className));
             }
 
             if (e.target.className === `itemCheck${getTargetIndex(e, e.target.className)}`) {   // click on item checkbox
