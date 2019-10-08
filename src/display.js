@@ -1,3 +1,5 @@
+import { masterList, itemFactory } from './data.js';
+
 const content = document.getElementById('content');
 const main = document.createElement('div');
 const listGrid = document.createElement('div');
@@ -44,29 +46,26 @@ const displayNewListInput = function() {
 // creates an input box when clicking + New item
 const displayNewItemInput = function() {
     const newItemInputTitle = document.createElement('input');
-    const newItemInputFlagBtn = document.createElement('button');
     const newItemInputCancelBtn = document.createElement('button');
     const newItemArea = document.querySelector('.newItem');
 
     newItemInputTitle.setAttribute('type', 'text');   // create a new item title input box
     newItemInputTitle.classList.add(`newItemInput`);
     newItemInputTitle.setAttribute('name', 'newItemTitle');
-    newItemInputTitle.setAttribute('placeholder', 'Add your item here');
+    newItemInputTitle.setAttribute('placeholder', 'Describe your item here');
     newItemInputTitle.setAttribute('size', '10');
     newItemInputTitle.setAttribute('maxlength', '150');
 
     newItemArea.replaceWith(newItemInputTitle);
-    newItemInputTitle.insertAdjacentElement('afterend', newItemInputFlagBtn);   // replace + New Item with a New Item input box
-    newItemInputFlagBtn.classList.add('newItemInputFlagBtn');
-    newItemInputFlagBtn.textContent = '!!!';
 
-    newItemInputFlagBtn.insertAdjacentElement('afterend', newItemInputCancelBtn);   // create a cancel button next to confirm button
+    newItemInputTitle.insertAdjacentElement('afterend', newItemInputCancelBtn);   // create a cancel button next to confirm button
     newItemInputCancelBtn.classList.add('newItemInputCancelBtn');
     newItemInputCancelBtn.textContent = 'X';
 
     newItemInputTitle.focus();
 };
 
+// creates an input box for a new note when clicking + New item
 const displayNewItemInputNote = function() {
     const newItemInputNote = document.createElement('input');
 
@@ -77,9 +76,49 @@ const displayNewItemInputNote = function() {
     newItemInputNote.setAttribute('size', '10');
     newItemInputNote.setAttribute('maxlength', '150');
 
-    console.log(document.querySelector('.newItemInput'));
     document.querySelector('.newItemInput').insertAdjacentElement('afterend', newItemInputNote);
+};
 
+// creates an input box for a due date when clicking + New item
+const displayNewItemInputDate = function() {
+    const newItemInputDate = document.createElement('div');
+    const newItemInputDateHeader = document.createElement('p');
+    const newItemInputDateMonth = document.createElement('input');
+    const newItemInputDateDay = document.createElement('input');
+    const newItemInputDateYear = document.createElement('input');
+
+    newItemInputDate.setAttribute('id', 'newItemInputDate');
+
+    newItemInputDateHeader.classList.add(`newItemInputDateValue`);
+    newItemInputDateHeader.style.cssText = 'font-size: 8pt; font-weight: bold; color: rgb(198, 78, 116)';
+    newItemInputDateHeader.textContent = 'Due Date:';
+    
+    newItemInputDateMonth.setAttribute('type', 'text');
+    newItemInputDateMonth.classList.add(`newItemInputDateValue`);
+    newItemInputDateMonth.setAttribute('name', 'newItemDateMonth');
+    newItemInputDateMonth.setAttribute('placeholder', 'MM');
+    newItemInputDateMonth.setAttribute('size', '2');
+    newItemInputDateMonth.setAttribute('maxlength', '2');
+
+    newItemInputDateDay.setAttribute('type', 'text');   // create a new item note input box
+    newItemInputDateDay.classList.add(`newItemInputDateValue`);
+    newItemInputDateDay.setAttribute('name', 'newItemDateDay');
+    newItemInputDateDay.setAttribute('placeholder', 'DD');
+    newItemInputDateDay.setAttribute('size', '2');
+    newItemInputDateDay.setAttribute('maxlength', '2');
+
+    newItemInputDateYear.setAttribute('type', 'text');   // create a new item note input box
+    newItemInputDateYear.classList.add(`newItemInputDateValue`);
+    newItemInputDateYear.setAttribute('name', 'newItemDateYear');
+    newItemInputDateYear.setAttribute('placeholder', 'YY');
+    newItemInputDateYear.setAttribute('size', '2');
+    newItemInputDateYear.setAttribute('maxlength', '2');
+
+    document.querySelector('.newItemInputNote').insertAdjacentElement('afterend', newItemInputDate);
+    newItemInputDate.appendChild(newItemInputDateHeader);
+    newItemInputDate.appendChild(newItemInputDateMonth);
+    newItemInputDate.appendChild(newItemInputDateDay);
+    newItemInputDate.appendChild(newItemInputDateYear);
 };
 
 // returns the new list name
@@ -100,18 +139,40 @@ const appendNewList = function() {
 // returns the new item title
 const appendNewItem = function() {
     const newItemToAdd = document.getElementsByClassName('newItemInput');
-    const newItemNoteToAdd = document.getElementsByClassName('newItemInputNote');    
+    const newItemNoteToAdd = document.getElementsByClassName('newItemInputNote');
+    const newItemDate = document.querySelectorAll('.newItemInputDateValue');
     const newItemTitle = newItemToAdd.newItemTitle;
     const newItemNote = newItemNoteToAdd.newItemNote;
+
     let newTitleOfItem = newItemTitle.value;
     let newNoteOfItem = newItemNote.value;
-    let itemInfo = [newTitleOfItem, newNoteOfItem];
+    let newDateMonthOfItem = newItemDate[1].value;
+    let newDateDayOfItem = newItemDate[2].value;
+    let newDateYearOfItem = newItemDate[3].value;
+    let itemInfo = [newTitleOfItem, newNoteOfItem, `${newDateMonthOfItem}/${newDateDayOfItem}/${newDateYearOfItem}`];
 
     if (newTitleOfItem === '') {
         alert("Name of item can't be empty.");
         itemsGrid.firstChild.nextSibling.focus();   // put focus back on input box
         return false;
     
+    // check to see if the characters entered are digits
+    } else if (newDateMonthOfItem.charCodeAt(0) < 48 || newDateMonthOfItem.charCodeAt(0) > 57
+        || newDateMonthOfItem.charCodeAt(1) < 48 || newDateMonthOfItem.charCodeAt(1) > 57
+        || newDateDayOfItem.charCodeAt(0) < 48 || newDateDayOfItem.charCodeAt(0) > 57
+        || newDateDayOfItem.charCodeAt(1) < 48 || newDateDayOfItem.charCodeAt(1) > 57
+        || newDateYearOfItem.charCodeAt(0) < 48 || newDateYearOfItem.charCodeAt(0) > 57
+        || newDateYearOfItem.charCodeAt(1) < 48 || newDateYearOfItem.charCodeAt(1) > 57)  {
+        alert("Please enter a valid date.");
+        return false;
+    
+    // check to see if the characters entered are valid values for dates
+    } else if (newDateMonthOfItem === '' || newDateMonthOfItem < 1 || newDateMonthOfItem > 12
+        || newDateDayOfItem === '' || newDateDayOfItem < 1 || newDateDayOfItem > 31 
+        || newDateYearOfItem === '' || newDateYearOfItem < 0 || newDateYearOfItem.length < 2) {
+        alert("Please enter a valid date.");
+        return false;
+
     } else {
         return itemInfo;
     }
@@ -135,17 +196,37 @@ const displayEditListInput = function(listIndex) {
 
 // creates an input box for editing an item title
 const displayEditItemInput = function(listIndex, itemIndex) {
+    const editItem = document.createElement('p');
     const editItemInputTitle = document.createElement('input');
-    const itemToEdit = document.querySelector(`.item${itemIndex}`);
+    const editItemInputNote = document.createElement('input');
+    const itemTitleToEdit = document.querySelector(`#item${itemIndex}`);
+    // const itemNoteToEdit = document.querySelector(`.note${itemIndex}`);
+
+    editItem.setAttribute('id', `editItem${itemIndex}`);
 
     editItemInputTitle.setAttribute('type', 'text');   // create a new item title input box
     editItemInputTitle.classList.add(`editItemInputTitle${itemIndex}`);
     editItemInputTitle.setAttribute('name', 'editItemTitle');
     editItemInputTitle.setAttribute('size', '10');
     editItemInputTitle.setAttribute('maxlength', '150');
+
+    editItemInputNote.setAttribute('type', 'text');   // create a new item note input box
+    editItemInputNote.classList.add(`editItemInputNote${itemIndex}`);
+    editItemInputNote.setAttribute('name', 'editItemNote');
+    editItemInputNote.setAttribute('size', '10');
+    editItemInputNote.setAttribute('maxlength', '150');
     
-    itemToEdit.replaceWith(editItemInputTitle);
+    itemTitleToEdit.replaceWith(editItem);
+    editItem.appendChild(editItemInputTitle);
+
     editItemInputTitle.value = masterList.listArray[listIndex].items[itemIndex].title;
+    editItemInputNote.value = masterList.listArray[listIndex].items[itemIndex].note;
+    
+    if (editItemInputNote.value !== 'undefined') {
+        editItem.appendChild(editItemInputNote);
+        // editItemInputTitle.insertAdjacentElement('afterend', editItemInputNote);
+    }
+    
     editItemInputTitle.focus();
 }
 
@@ -250,34 +331,59 @@ const displayItemsGrid = function(listIndex) {
 
     if (listIndex >= 0) {   // if there is at least 1 list on the page 
     masterList.listArray[listIndex].items.forEach((item, index, itemsArray) => {   // render all items to the list
-        itemsGrid.appendChild(document.createElement('button')).classList.add(`itemCheck${index}`);   // create a checkbox for every item
-        itemsGrid.appendChild(document.createElement('p')).classList.add(`item${index}`);   // create a <p> element with class "item" for every item
-        itemsGrid.appendChild(document.createElement('p')).classList.add(`priority${index}`);   // create a <p> element with the priority symbol
+        const itemCheckBox = document.createElement('button');
+        const itemTitle = document.createElement('p');
+        const itemDate = document.createElement('p');
+        const itemNote = document.createElement('p');
+        const itemPriority = document.createElement('p');
+        const itemSettingsBtn = document.createElement('button');
+        
+        itemsGrid.appendChild(itemCheckBox).classList.add(`itemCheck${index}`);   // create a checkbox for every item
+        itemsGrid.appendChild(itemTitle).setAttribute('id', `item${index}`);   // create a <p> element with class "item" for every item
+        itemsGrid.appendChild(itemPriority);
+        itemsGrid.appendChild(itemSettingsBtn).classList.add(`itemSettingsBtn${index}`);   // create an item settings button for every item
 
+        itemCheckBox.textContent = ``;
+        itemTitle.textContent = `${item.title}`;
+        itemPriority.textContent = `!!!`;
+        itemSettingsBtn.textContent = settingsSymbol;
 
-        itemsGrid.appendChild(document.createElement('button')).classList.add(`itemSettingsBtn${index}`);   // create an item settings button for every item
+        if (item.priority === false || item.priority === undefined) {
+            itemPriority.classList.add(`notPriority${index}`);   // create a <p> element with priority inactive
 
-        document.querySelector(`.itemCheck${index}`).textContent = ``;
-        document.querySelector(`.item${index}`).textContent = `${item.title}`;
-        document.querySelector(`.priority${index}`).textContent = prioritySymbol;
-        document.querySelector(`.itemSettingsBtn${index}`).textContent = settingsSymbol;
-
-        console.log(item.date);
-
-        if (item.date !== undefined) {
-        document.querySelector(`.item${index}`).appendChild(document.createElement('p')).classList.add(`date${index}`);   
-        document.querySelector(`.date${index}`).textContent = `${item.date}`;
+        } else {
+            itemTitle.classList.add('itemPriority');   // change item color to red
+            itemPriority.classList.add(`priority${index}`);   // create a <p> element with priority active
         }
 
-        
-        if (item.date === undefined && item.note !== undefined) {   // creates a <p> element with class "note" for every item
-        document.querySelector(`.item${index}`).appendChild(document.createElement('p')).classList.add(`note${index}`);   
-        document.querySelector(`.note${index}`).textContent = `${item.note}`;
-        } else if (item.date !== undefined && item.note !== undefined) {
-            console.log( document.querySelector('.date' + index));
-            document.querySelector('.date' + index).appendChild(document.createElement('p')).classList.add('note' + index);   
-            document.querySelector('.note' + index).textContent = `${item.note}`;
+        if (item.note !== undefined && item.date !== undefined) {   // if a date and note exists
+            itemTitle.insertAdjacentElement('beforeend', itemNote);
+            itemNote.insertAdjacentElement('afterend', itemDate)
+            itemNote.classList.add(`note${index}`);   
+            itemDate.classList.add(`date${index}`);
+            itemNote.textContent = `${item.note}`;
+            itemDate.textContent = `Due: ${item.date}`;
+
+        } else if (item.note !== undefined) {   // if only a note exists
+            itemTitle.insertAdjacentElement('beforeend', itemNote);
+            itemNote.classList.add(`note${index}`);
+            itemNote.textContent = `${item.note}`;
+
+        } else if (item.date !== undefined) {   // if only a due date exists
+            itemTitle.insertAdjacentElement('beforeend', itemDate);
+            itemDate.classList.add(`date${index}`);
+            itemDate.textContent = `Due: ${item.date}`;
         }   
+
+        if (item.done === true) {
+            itemTitle.classList.add('itemDone');   // create a <p> element with "done" inactive
+            itemCheckBox.classList.add('itemCheckDone');
+            itemCheckBox.textContent = `X`;
+
+        } else {
+            itemTitle.classList.remove('itemDone');
+            itemCheckBox.classList.remove('itemCheckDone');
+        }
     });
     }
 };
@@ -367,6 +473,7 @@ const createListeners = (function() {
             }
             
             if (listSettingBtnClicked === true) {   // handles all clicks on the list settings
+            
                 if (e.target.className.indexOf('listEditBtn') > -1 && e.target !== e.currentTarget) {   // press the edit list button    
                     lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose edit button was clicked
 
@@ -427,40 +534,91 @@ const createListeners = (function() {
         }
 
         function clickItemGrid(e) {   // handles all clicks on the items
-            
+
             // click on + new item button
-            if (e.target.className === 'newItemButton' && addNewItemBtnClicked === false) {
-                addNewItemBtnClicked = true;
-                console.log('you clicked on the + new item button');
+            if (addNewItemBtnClicked === true && itemsGrid.firstChild.nextSibling.className === 'newItem') {   // if clicking on something after clicking the + button
+                
+                console.log('conditional');
+                console.log(itemsGrid.firstChild.nextSibling.nextSibling);
+                
+                addNewItemBtnClicked = false;
                 displayNewItemInput();
                 displayNewItemInputNote();
 
+            } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === false) {
+                addNewItemBtnClicked = true;
+                displayNewItemInput();
+                displayNewItemInputNote();
+                displayNewItemInputDate();
+
             } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === true) {
+
                 if (appendNewItem() !== false) {   // if the new item name is not empty
-                    masterList.listArray[lastClickedList].items = masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1]));
+                    masterList.listArray[lastClickedList].items = masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1], appendNewItem()[2]));
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
                     addNewItemBtnClicked = false;
                 }
+
+            } else if (e.target.className === 'newItemInputCancelBtn') {   // new item cancel button is clicked
+                refreshDisplay();
+                displayListGrid();
+                displayItemsGrid(lastClickedList);
+                highlightList(lastClickedList);
+                addNewItemBtnClicked = false;
             }
 
             // click on the item settings button
             if (e.target.className === `itemSettingsBtn${getTargetIndex(e, e.target.className)}`) {
-
+                displayItemsButtons();
             }
 
+            console.log(e.target.className);
+
             // click on the item
-            if (e.target.className === `item${getTargetIndex(e, e.target.className)}`) {
+            if (e.target.id === `item${getTargetIndex(e, e.target.id)}`) {
                 // console.log(`you clicked on item ${getTargetIndex(e, e.target.className)}`);
-                displayEditItemInput(lastClickedList, getTargetIndex(e, e.target.className));
+                displayEditItemInput(lastClickedList, getTargetIndex(e, e.target.id));
+            }
+
+            // click on the item's priority
+            if (e.target.className === `notPriority${getTargetIndex(e, e.target.className)}`) {
+                masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].priority = true;
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+                    addNewItemBtnClicked = false;
+            } else if (e.target.className === `priority${getTargetIndex(e, e.target.className)}`) {
+                masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].priority = false;
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+                    addNewItemBtnClicked = false;
             }
 
             // click on item checkbox
-            if (e.target.className === `itemCheck${getTargetIndex(e, e.target.className)}`) {   // if the item is unchecked
+            // if (e.target.className === `itemCheck${getTargetIndex(e, e.target.className)}`) { 
+            if (e.target.className.indexOf('itemCheck') > -1) { 
                 // make the item red/checked
+                if (masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done !== true) {
+                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done = true;
+                 
+                } else if (e.target.className.indexOf('itemCheckDone') > -1) {
+                    console.log(e.target.classList);
+                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done = false;
+                    // e.target.classList.remove('itemDone');
+                }
+
                 console.log(`you clicked on item checkbox ${getTargetIndex(e, e.target.className)}`);
+                refreshDisplay();
+                displayListGrid();
+                displayItemsGrid(lastClickedList);
+                highlightList(lastClickedList);
+                addNewItemBtnClicked = false;
             }
             e.stopPropagation();
         }
@@ -484,3 +642,5 @@ const initDisplay = (() => {
     highlightList(0);
     createListeners.startListListeners();
 })();
+
+export { initDisplay }
