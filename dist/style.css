@@ -26,11 +26,19 @@ body {
 }
 
 h1 {
-    font-size: 40pt;
-    padding: 20px;
+    font-size: 25pt;
+    padding-top: 20px;
+    padding-bottom: 7px;
     text-align: center;
     margin: 0 auto;
     color: rgb(92, 190, 255);
+}
+
+.subHeader {
+    font-weight: 600;
+    color: rgb(255, 27, 145);
+    text-align: center;
+    padding-bottom: 10px;
 }
 
 input {
@@ -316,7 +324,7 @@ button[class^="editSaveBtn"]:hover {
 
 .newItemButton:hover {
     
-    color: rgb(54, 208, 255);;
+    color: rgb(54, 208, 255);
 }
 
 .newItemInput {
@@ -450,6 +458,7 @@ button[class^="itemCheck"] {
     align-self: center;
     justify-self: center;
     outline: none;
+    cursor: pointer;
 }
 
 button[class^="itemCheck"]:hover {
@@ -497,7 +506,7 @@ p[class^="note"] {
     font-size: 10pt;
     font-weight: 100;
     /* padding-left: 20px; */
-    color: rgb(172, 240, 255);
+    color: rgb(83, 177, 198);
     align-self: end;
 }
 
@@ -559,7 +568,7 @@ button[class^="itemSettingsBtn"] {
 }
 
 button[class^="itemSettingsBtn"]:hover {
-    color: rgb(255, 54, 154);
+    color: rgb(54, 208, 255);
 }
 
 button[class^="itemEditBtn"] {
@@ -581,7 +590,7 @@ button[class^="itemEditBtn"] {
 }
 
 button[class^="itemEditBtn"]:hover {
-    color: rgb(255, 54, 154);
+    color: rgb(54, 208, 255);
 }
 
 button[class^="itemDeleteBtn"] {
@@ -652,11 +661,48 @@ input[class^="editItemInputNote"] {
     /* padding-left: 3px; */
     /* padding-right: 5px; */
     /* padding-bottom: 10px; */
-    color: rgb(172, 240, 255);
+    color: rgb(83, 177, 198);
     background-color: rgb(5, 27, 38);
     /* border: 1px solid rgb(54, 208, 255); */
     border-radius: 5px;
     border: 0;
     /* align-self: end; */
     outline: none;
+}
+
+input[class^="editItemInputDate"] {
+    /* grid-column: 2 / 3; */
+    font-size: 10pt;
+    font-weight bold;
+    color: rgb(198, 78, 116);
+    width: auto;
+    background-color: rgb(5, 27, 38);
+    border-radius: 5px;
+    border: 0;
+    /* border-radius: 5px; */
+    /* border: 0; */
+    align-self: center;
+    outline: none;
+}
+
+button[class^="editItemSaveBtn"] {
+    grid-column: 5 / 6;
+    font-size: 10pt;
+    vertical-align: middle;
+    line-height: 0px;
+    width: auto;
+    height: 25px;
+    padding: 5px;
+    color:white;
+    background-color: transparent;
+    border: 0;
+    /* border: 2px solid rgb(255, 54, 154); */
+    align-self: center;
+    justify-self: center;
+    cursor: pointer;
+    outline: none;
+}
+
+button[class^="editItemSaveBtn"]:hover {
+    color:rgb(108, 255, 184);
 }

@@ -16,7 +16,7 @@ const createDisplay = function() {
     main.appendChild(itemsGrid);
 };
 
-// creates an input box when clicking + New List
+// creates an input box when clicking + new list
 const displayNewListInput = function() {
     const newListInput = document.createElement('input');
     const newListInputConfirmBtn = document.createElement('button');
@@ -43,7 +43,7 @@ const displayNewListInput = function() {
     newListInput.focus();
 };
 
-// creates an input box when clicking + New item
+// creates an input box when clicking + new item
 const displayNewItemInput = function() {
     const newItemInputTitle = document.createElement('input');
     const newItemInputCancelBtn = document.createElement('button');
@@ -65,7 +65,7 @@ const displayNewItemInput = function() {
     newItemInputTitle.focus();
 };
 
-// creates an input box for a new note when clicking + New item
+// creates an input box for a new note when clicking + new item
 const displayNewItemInputNote = function() {
     const newItemInputNote = document.createElement('input');
 
@@ -79,7 +79,7 @@ const displayNewItemInputNote = function() {
     document.querySelector('.newItemInput').insertAdjacentElement('afterend', newItemInputNote);
 };
 
-// creates an input box for a due date when clicking + New item
+// creates an input box for a due date when clicking + new item
 const displayNewItemInputDate = function() {
     const newItemInputDate = document.createElement('div');
     const newItemInputDateHeader = document.createElement('p');
@@ -100,14 +100,14 @@ const displayNewItemInputDate = function() {
     newItemInputDateMonth.setAttribute('size', '2');
     newItemInputDateMonth.setAttribute('maxlength', '2');
 
-    newItemInputDateDay.setAttribute('type', 'text');   // create a new item note input box
+    newItemInputDateDay.setAttribute('type', 'text');
     newItemInputDateDay.classList.add(`newItemInputDateValue`);
     newItemInputDateDay.setAttribute('name', 'newItemDateDay');
     newItemInputDateDay.setAttribute('placeholder', 'DD');
     newItemInputDateDay.setAttribute('size', '2');
     newItemInputDateDay.setAttribute('maxlength', '2');
 
-    newItemInputDateYear.setAttribute('type', 'text');   // create a new item note input box
+    newItemInputDateYear.setAttribute('type', 'text');
     newItemInputDateYear.classList.add(`newItemInputDateValue`);
     newItemInputDateYear.setAttribute('name', 'newItemDateYear');
     newItemInputDateYear.setAttribute('placeholder', 'YY');
@@ -119,6 +119,10 @@ const displayNewItemInputDate = function() {
     newItemInputDate.appendChild(newItemInputDateMonth);
     newItemInputDate.appendChild(newItemInputDateDay);
     newItemInputDate.appendChild(newItemInputDateYear);
+    
+    return {
+        newItemInputDate, newItemInputDateHeader, newItemInputDateDay, newItemInputDateMonth, newItemInputDateYear
+    };
 };
 
 // returns the new list name
@@ -149,8 +153,51 @@ const appendNewItem = function() {
     let newDateMonthOfItem = newItemDate[1].value;
     let newDateDayOfItem = newItemDate[2].value;
     let newDateYearOfItem = newItemDate[3].value;
-    let itemInfo = [newTitleOfItem, newNoteOfItem, `${newDateMonthOfItem}/${newDateDayOfItem}/${newDateYearOfItem}`];
+    let newDate = `${newDateMonthOfItem}/${newDateDayOfItem}/${newDateYearOfItem}`;
+    let itemInfo = [];
 
+    
+
+    if (newDateMonthOfItem === '' && newDateDayOfItem === '' && newDateYearOfItem === '') {
+        newDate = undefined;
+    }
+    
+    if (newTitleOfItem !== '') {
+
+        if (newDateMonthOfItem !== '' || newDateDayOfItem !== '' || newDateYearOfItem !== '') {
+
+            if (newDateMonthOfItem.charCodeAt(0) < 48 || newDateMonthOfItem.charCodeAt(0) > 57
+                || newDateMonthOfItem.charCodeAt(1) < 48 || newDateMonthOfItem.charCodeAt(1) > 57
+                || newDateDayOfItem.charCodeAt(0) < 48 || newDateDayOfItem.charCodeAt(0) > 57
+                || newDateDayOfItem.charCodeAt(1) < 48 || newDateDayOfItem.charCodeAt(1) > 57
+                || newDateYearOfItem.charCodeAt(0) < 48 || newDateYearOfItem.charCodeAt(0) > 57
+                || newDateYearOfItem.charCodeAt(1) < 48 || newDateYearOfItem.charCodeAt(1) > 57)  {
+                alert("Please enter a valid date.");
+                return false;
+            
+            } else if (newDateMonthOfItem < 1 || newDateMonthOfItem > 12
+                || newDateDayOfItem < 1 || newDateDayOfItem > 31 
+                || newDateYearOfItem < 0 || newDateYearOfItem.length < 2) {
+                alert("Please enter a valid date.");
+                return false;
+            }
+        
+            itemInfo = [newTitleOfItem, newNoteOfItem, newDate];
+            return itemInfo;
+
+        } else {
+            console.log('yup we got this');
+            itemInfo = [newTitleOfItem, newNoteOfItem, newDate];
+            return itemInfo;
+        }
+
+    } else {
+        alert("Name of item can't be empty.");
+        itemsGrid.firstChild.nextSibling.focus();   // put focus back on input box
+        return false;
+    }
+
+    /*
     if (newTitleOfItem === '') {
         alert("Name of item can't be empty.");
         itemsGrid.firstChild.nextSibling.focus();   // put focus back on input box
@@ -173,9 +220,15 @@ const appendNewItem = function() {
         alert("Please enter a valid date.");
         return false;
 
+    } else if (newDateMonthOfItem === '' && newDateDayOfItem === '' && newDateYearOfItem === '') {
+        alert("Please enter a valid date.");
+        return false;
+
     } else {
         return itemInfo;
     }
+    */
+
 };
 
 // creates an input box for editing a list name
@@ -199,38 +252,58 @@ const displayEditItemInput = function(listIndex, itemIndex) {
     const editItem = document.createElement('p');
     const editItemInputTitle = document.createElement('input');
     const editItemInputNote = document.createElement('input');
+    const editItemInputDate = document.createElement('input');
     const itemTitleToEdit = document.querySelector(`#item${itemIndex}`);
-    // const itemNoteToEdit = document.querySelector(`.note${itemIndex}`);
 
     editItem.setAttribute('id', `editItem${itemIndex}`);
 
-    editItemInputTitle.setAttribute('type', 'text');   // create a new item title input box
+    editItemInputTitle.setAttribute('type', 'text');   // create an edit item title input box
     editItemInputTitle.classList.add(`editItemInputTitle${itemIndex}`);
     editItemInputTitle.setAttribute('name', 'editItemTitle');
     editItemInputTitle.setAttribute('size', '10');
     editItemInputTitle.setAttribute('maxlength', '150');
 
-    editItemInputNote.setAttribute('type', 'text');   // create a new item note input box
+    editItemInputNote.setAttribute('type', 'text');   // create an edit item note input box
     editItemInputNote.classList.add(`editItemInputNote${itemIndex}`);
     editItemInputNote.setAttribute('name', 'editItemNote');
+    editItemInputNote.setAttribute('placeholder', 'Add a note here');
     editItemInputNote.setAttribute('size', '10');
     editItemInputNote.setAttribute('maxlength', '150');
+
+    editItemInputDate.setAttribute('type', 'text');   // create an edit item date input box
+    editItemInputDate.classList.add(`editItemInputDate${itemIndex}`);
+    editItemInputDate.setAttribute('name', 'editItemDate');
+    editItemInputDate.setAttribute('placeholder', 'MM/DD/YY');
+    editItemInputDate.setAttribute('size', '10');
+    editItemInputDate.setAttribute('maxlength', '8');
     
     itemTitleToEdit.replaceWith(editItem);
     editItem.appendChild(editItemInputTitle);
 
     editItemInputTitle.value = masterList.listArray[listIndex].items[itemIndex].title;
     editItemInputNote.value = masterList.listArray[listIndex].items[itemIndex].note;
+    editItemInputDate.value = masterList.listArray[listIndex].items[itemIndex].date;
     
     if (editItemInputNote.value !== 'undefined') {
         editItem.appendChild(editItemInputNote);
-        // editItemInputTitle.insertAdjacentElement('afterend', editItemInputNote);
+
+    } else {
+        editItemInputNote.value = '';
+        editItem.appendChild(editItemInputNote);
+    }
+
+    if (editItemInputDate.value !== 'undefined') {
+        editItem.appendChild(editItemInputDate);
+
+    } else {
+        editItemInputDate.value = '';
+        editItem.appendChild(editItemInputDate);
     }
     
     editItemInputTitle.focus();
 }
 
-// returnes the edited list name
+// returns the edited list name
 const updateListName = function(listIndex) {
     const listToEdit = document.getElementsByClassName(`editListInput${listIndex}`);
     const updatedListName = listToEdit.editListName;   // the "name" property of the <input>
@@ -240,18 +313,56 @@ const updateListName = function(listIndex) {
     if (newNameOfList === '') {
         alert("Name of list can't be empty.");
         return false;
+
     } else {
         return newNameOfList;
     }
 };
 
-// creates an edit "confirm" button
+// returns the edited item values
+const updateItem = function(itemIndex) {
+    const itemTitleToEdit = document.querySelector(`.editItemInputTitle${itemIndex}`);
+    const itemNoteToEdit = document.querySelector(`.editItemInputNote${itemIndex}`);
+    const itemDateToEdit = document.querySelector(`.editItemInputDate${itemIndex}`);
+
+    let newItemTitle = itemTitleToEdit.value;
+    let newItemNote = itemNoteToEdit.value;
+    let newItemDate = itemDateToEdit.value;
+    let updatedItem = [newItemTitle, newItemNote, newItemDate];
+
+    if (newItemDate === '') {
+        newItemDate = undefined;
+        
+        console.log({newItemDate});
+        console.log(masterList.listArray);
+    }
+
+    if (newItemTitle === '') {
+        alert("The name of this item can't be empty.");
+        return false;
+
+    } else {
+        return updatedItem;
+    }
+
+};
+
+// creates an edit "confirm" save button for list
 const displayEditListButtons = function(listIndex) {
     const editButton = document.createElement('button');
 
     document.querySelector(`.listEditBtn${listIndex}`).remove();
     document.querySelector(`.listSettingsBtn${listIndex}`).insertAdjacentElement('afterend', editButton).classList.add(`editSaveBtn${listIndex}`);
     document.querySelector(`.listSettingsBtn${listIndex}`).nextSibling.textContent = 'SAVE';
+};
+
+// creates an edit "confirm" save button for item
+const displayEditItemButtons = function(itemIndex) {
+    const editButton = document.createElement('button');
+
+    document.querySelector(`.itemEditBtn${itemIndex}`).remove();
+    document.querySelector(`.itemSettingsBtn${itemIndex}`).insertAdjacentElement('afterend', editButton).classList.add(`editItemSaveBtn${itemIndex}`);
+    document.querySelector(`.itemSettingsBtn${itemIndex}`).nextSibling.textContent = 'SAVE';
 };
 
 // creates and displays the + New List button
@@ -356,7 +467,7 @@ const displayItemsGrid = function(listIndex) {
             itemPriority.classList.add(`priority${index}`);   // create a <p> element with priority active
         }
 
-        if (item.note !== undefined && item.date !== undefined) {   // if a date and note exists
+        if (item.note !== undefined && item.date !== undefined && item.date !== '') {   // if a date and note exists
             itemTitle.insertAdjacentElement('beforeend', itemNote);
             itemNote.insertAdjacentElement('afterend', itemDate)
             itemNote.classList.add(`note${index}`);   
@@ -369,7 +480,7 @@ const displayItemsGrid = function(listIndex) {
             itemNote.classList.add(`note${index}`);
             itemNote.textContent = `${item.note}`;
 
-        } else if (item.date !== undefined) {   // if only a due date exists
+        } else if (item.date !== undefined & item.date !== '') {   // if only a due date exists
             itemTitle.insertAdjacentElement('beforeend', itemDate);
             itemDate.classList.add(`date${index}`);
             itemDate.textContent = `Due: ${item.date}`;
@@ -409,12 +520,14 @@ const createListeners = (function() {
     let deletedList;
     let addNewItemBtnClicked = false;
     let listSettingBtnClicked = false;
+    let itemSettingBtnClicked = false;
 
     const startListListeners = function() {
         listGrid.addEventListener('click', clickListGrid, false);
         itemsGrid.addEventListener('click', clickItemGrid, false);
 
-        const getTargetIndex = function(event, listElement) {   // return the index of a clicked element
+        // return the index of a clicked element
+        const getTargetIndex = function(event, listElement) {   
             let targetIndex = '';
             
             if (listElement && listElement.indexOf('currentList') === -1) {   // checks if an index has been passed. if not, gets index from element click.
@@ -429,10 +542,12 @@ const createListeners = (function() {
             } else {
                 targetIndex = String(event.target.className).replace(/[^0-9]/g,'');
             }
+
             return +targetIndex;
         };
         
-        function clickListGrid(e) {   // handles all clicks on the Lists
+        // handles all clicks on the Lists
+        function clickListGrid(e) {
             const lists = listGrid.querySelectorAll("p[class^='list']");
             let listElements = Array.from(lists);   // put all .list elements in an array
 
@@ -447,8 +562,7 @@ const createListeners = (function() {
                 displayNewListInput();
 
             } else if (e.target.className === 'newListInputConfirmBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
-                // document.querySelector('.newListInput').focus();
-
+                
                 if (appendNewList() !== false) {   // if the new list name is not empty
                     masterList.addNewList(appendNewList());
                     refreshDisplay();
@@ -459,6 +573,7 @@ const createListeners = (function() {
                 }
 
             } else if (e.target.className === 'newListInputCancelBtn' && e.target !== e.currentTarget) {   // click the "cancel new list" button
+
                 if (e.target.className === listGrid.lastChild.className) {
                     refreshDisplay();
                     displayNewListButton();
@@ -530,20 +645,23 @@ const createListeners = (function() {
                 displayItemsGrid(lastClickedList);
                 highlightList(lastClickedList);
             }
+
             e.stopPropagation();
         }
 
-        function clickItemGrid(e) {   // handles all clicks on the items
+        // handles all clicks on the items
+        function clickItemGrid(e) {
 
             // click on + new item button
-            if (addNewItemBtnClicked === true && itemsGrid.firstChild.nextSibling.className === 'newItem') {   // if clicking on something after clicking the + button
+
+            if (addNewItemBtnClicked === true && itemsGrid.firstChild.nextSibling.className === 'newItem') {   // if clicking on something after clicking the + button                
                 
-                console.log('conditional');
-                console.log(itemsGrid.firstChild.nextSibling.nextSibling);
+                console.log('clicked the +, left and clicked + again');
                 
                 addNewItemBtnClicked = false;
                 displayNewItemInput();
                 displayNewItemInputNote();
+                displayNewItemInputDate();
 
             } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === false) {
                 addNewItemBtnClicked = true;
@@ -553,7 +671,7 @@ const createListeners = (function() {
 
             } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === true) {
 
-                if (appendNewItem() !== false) {   // if the new item name is not empty
+                if (appendNewItem() !== false) {
                     masterList.listArray[lastClickedList].items = masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1], appendNewItem()[2]));
                     refreshDisplay();
                     displayListGrid();
@@ -571,19 +689,61 @@ const createListeners = (function() {
             }
 
             // click on the item settings button
-            if (e.target.className === `itemSettingsBtn${getTargetIndex(e, e.target.className)}`) {
-                displayItemsButtons();
-            }
 
+            if (itemSettingBtnClicked === true) {
+
+                if (e.target.className === `itemEditBtn${getTargetIndex(e, e.target.className)}`) {   // if the edit item button clicked on
+                    console.log('you clicked on the edit item settings button');
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    displayItemsButtons();
+                    displayEditItemInput(lastClickedList, getTargetIndex(e, e.target.id));
+                    displayEditItemButtons(getTargetIndex(e, e.target.id));
+
+                } else if (e.target.className === `editItemSaveBtn${getTargetIndex(e, e.target.className)}`) {
+                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.id)].changeTitle(updateItem(getTargetIndex(e, e.target.id))[0]);
+                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.id)].changeNote(updateItem(getTargetIndex(e, e.target.id))[1]);
+                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.id)].changeDueDate(updateItem(getTargetIndex(e, e.target.id))[2]);
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    displayItemsButtons();
+                    highlightList(lastClickedList);
+
+                    console.log(masterList.listArray);
+
+                } else if (e.target.className.indexOf('itemDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete item button and remove the item based on its index
+                    masterList.listArray[lastClickedList].removeItem(getTargetIndex(e, e.target.className));
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+                    itemSettingBtnClicked = false;
+
+                    console.log(masterList.listArray);
+                    
+                } else if (e.target.className === `itemSettingsBtn${getTargetIndex(e, e.target.className)}`) {   // refresh if the item settings button was clicked again
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+                    itemSettingBtnClicked = false;
+                }
+            
+            } else if (e.target.className === `itemSettingsBtn${getTargetIndex(e, e.target.className)}`) {   // if the list settings button is not open
+                itemSettingBtnClicked = true;
+                refreshDisplay();
+                displayListGrid();
+                displayItemsGrid(lastClickedList);
+                displayItemsButtons();
+                highlightList(lastClickedList);
+            }
+        
             console.log(e.target.className);
 
-            // click on the item
-            if (e.target.id === `item${getTargetIndex(e, e.target.id)}`) {
-                // console.log(`you clicked on item ${getTargetIndex(e, e.target.className)}`);
-                displayEditItemInput(lastClickedList, getTargetIndex(e, e.target.id));
-            }
-
             // click on the item's priority
+
             if (e.target.className === `notPriority${getTargetIndex(e, e.target.className)}`) {
                 masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].priority = true;
                     refreshDisplay();
@@ -591,6 +751,7 @@ const createListeners = (function() {
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
                     addNewItemBtnClicked = false;
+
             } else if (e.target.className === `priority${getTargetIndex(e, e.target.className)}`) {
                 masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].priority = false;
                     refreshDisplay();
@@ -601,8 +762,9 @@ const createListeners = (function() {
             }
 
             // click on item checkbox
-            // if (e.target.className === `itemCheck${getTargetIndex(e, e.target.className)}`) { 
+
             if (e.target.className.indexOf('itemCheck') > -1) { 
+                
                 // make the item red/checked
                 if (masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done !== true) {
                     masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done = true;
@@ -610,17 +772,17 @@ const createListeners = (function() {
                 } else if (e.target.className.indexOf('itemCheckDone') > -1) {
                     console.log(e.target.classList);
                     masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done = false;
-                    // e.target.classList.remove('itemDone');
                 }
 
-                console.log(`you clicked on item checkbox ${getTargetIndex(e, e.target.className)}`);
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(lastClickedList);
                 highlightList(lastClickedList);
                 addNewItemBtnClicked = false;
             }
+
             e.stopPropagation();
+
         }
     } 
     return { 
@@ -631,10 +793,15 @@ const createListeners = (function() {
 // initializes app display
 const initDisplay = (() => {
     const appHeader = document.createElement('h1');   // create the header
+    const subHeader = document.createElement('p');
     const checkMark = '\u{2713}';   // the ellipsis: ⋮
 
-    appHeader.textContent = `${checkMark} DO.`;
-    content.insertBefore(appHeader, main.childNodes[0]);
+    appHeader.textContent = `${checkMark} DO`;
+    content.insertAdjacentElement('afterbegin', appHeader);
+    // content.insertBefore(appHeader, main.childNodes[0]);
+    appHeader.insertAdjacentElement('afterend', subHeader);
+    subHeader.classList.add('subHeader');
+    subHeader.textContent = 'The best to-do list since paper.';
 
     createDisplay();
     displayListGrid();
