@@ -60,7 +60,7 @@ const displayNewItemInput = function() {
 
     newItemInputTitle.insertAdjacentElement('afterend', newItemInputCancelBtn);   // create a cancel button next to confirm button
     newItemInputCancelBtn.classList.add('newItemInputCancelBtn');
-    newItemInputCancelBtn.textContent = 'X';
+    newItemInputCancelBtn.textContent = 'x';
 
     newItemInputTitle.focus();
 };
@@ -135,6 +135,7 @@ const appendNewList = function() {
         alert("Name of list can't be empty.");
         listGrid.firstChild.focus();   // put focus back on input box
         return false;
+        
     } else {
         return newNameOfList;
     }
@@ -155,8 +156,6 @@ const appendNewItem = function() {
     let newDateYearOfItem = newItemDate[3].value;
     let newDate = `${newDateMonthOfItem}/${newDateDayOfItem}/${newDateYearOfItem}`;
     let itemInfo = [];
-
-    
 
     if (newDateMonthOfItem === '' && newDateDayOfItem === '' && newDateYearOfItem === '') {
         newDate = undefined;
@@ -186,7 +185,6 @@ const appendNewItem = function() {
             return itemInfo;
 
         } else {
-            console.log('yup we got this');
             itemInfo = [newTitleOfItem, newNoteOfItem, newDate];
             return itemInfo;
         }
@@ -196,39 +194,6 @@ const appendNewItem = function() {
         itemsGrid.firstChild.nextSibling.focus();   // put focus back on input box
         return false;
     }
-
-    /*
-    if (newTitleOfItem === '') {
-        alert("Name of item can't be empty.");
-        itemsGrid.firstChild.nextSibling.focus();   // put focus back on input box
-        return false;
-    
-    // check to see if the characters entered are digits
-    } else if (newDateMonthOfItem.charCodeAt(0) < 48 || newDateMonthOfItem.charCodeAt(0) > 57
-        || newDateMonthOfItem.charCodeAt(1) < 48 || newDateMonthOfItem.charCodeAt(1) > 57
-        || newDateDayOfItem.charCodeAt(0) < 48 || newDateDayOfItem.charCodeAt(0) > 57
-        || newDateDayOfItem.charCodeAt(1) < 48 || newDateDayOfItem.charCodeAt(1) > 57
-        || newDateYearOfItem.charCodeAt(0) < 48 || newDateYearOfItem.charCodeAt(0) > 57
-        || newDateYearOfItem.charCodeAt(1) < 48 || newDateYearOfItem.charCodeAt(1) > 57)  {
-        alert("Please enter a valid date.");
-        return false;
-    
-    // check to see if the characters entered are valid values for dates
-    } else if (newDateMonthOfItem === '' || newDateMonthOfItem < 1 || newDateMonthOfItem > 12
-        || newDateDayOfItem === '' || newDateDayOfItem < 1 || newDateDayOfItem > 31 
-        || newDateYearOfItem === '' || newDateYearOfItem < 0 || newDateYearOfItem.length < 2) {
-        alert("Please enter a valid date.");
-        return false;
-
-    } else if (newDateMonthOfItem === '' && newDateDayOfItem === '' && newDateYearOfItem === '') {
-        alert("Please enter a valid date.");
-        return false;
-
-    } else {
-        return itemInfo;
-    }
-    */
-
 };
 
 // creates an input box for editing a list name
@@ -260,6 +225,7 @@ const displayEditItemInput = function(listIndex, itemIndex) {
     editItemInputTitle.setAttribute('type', 'text');   // create an edit item title input box
     editItemInputTitle.classList.add(`editItemInputTitle${itemIndex}`);
     editItemInputTitle.setAttribute('name', 'editItemTitle');
+    editItemInputTitle.setAttribute('placeholder', 'Describe your item here');
     editItemInputTitle.setAttribute('size', '10');
     editItemInputTitle.setAttribute('maxlength', '150');
 
@@ -330,15 +296,11 @@ const updateItem = function(itemIndex) {
     let newItemDate = itemDateToEdit.value;
     let updatedItem = [newItemTitle, newItemNote, newItemDate];
 
-    if (newItemDate === '') {
-        newItemDate = undefined;
-        
-        console.log({newItemDate});
-        console.log(masterList.listArray);
-    }
+    (newItemDate === '') ? newItemDate = undefined : newItemDate;
 
     if (newItemTitle === '') {
         alert("The name of this item can't be empty.");
+        itemTitleToEdit.focus();
         return false;
 
     } else {
@@ -518,7 +480,6 @@ const refreshDisplay = function() {
 const createListeners = (function() {
     let lastClickedList = 0;   // store the last clicked list
     let deletedList;
-    let addNewItemBtnClicked = false;
     let listSettingBtnClicked = false;
     let itemSettingBtnClicked = false;
 
@@ -548,20 +509,21 @@ const createListeners = (function() {
         
         // handles all clicks on the Lists
         function clickListGrid(e) {
+            const clickClassName = e.target.className;
             const lists = listGrid.querySelectorAll("p[class^='list']");
             let listElements = Array.from(lists);   // put all .list elements in an array
 
             if (listElements.indexOf(e.target) >= 0 && e.target !== e.currentTarget) {   // click a list element
-                lastClickedList = getTargetIndex(e, e.target.className);
+                lastClickedList = getTargetIndex(e, clickClassName);
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(getTargetIndex(e));
                 highlightList(getTargetIndex(e));
 
-            } else if (e.target.className === 'newList' && e.target !== e.currentTarget) {   // click the "new list" button
+            } else if (clickClassName === 'newList' && e.target !== e.currentTarget) {   // click the "new list" button
                 displayNewListInput();
 
-            } else if (e.target.className === 'newListInputConfirmBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
+            } else if (clickClassName === 'newListInputConfirmBtn' && e.target !== e.currentTarget) {   // click the "add new list" button
                 
                 if (appendNewList() !== false) {   // if the new list name is not empty
                     masterList.addNewList(appendNewList());
@@ -572,9 +534,9 @@ const createListeners = (function() {
                     lastClickedList = getTargetIndex(e, listGrid.lastChild.className);
                 }
 
-            } else if (e.target.className === 'newListInputCancelBtn' && e.target !== e.currentTarget) {   // click the "cancel new list" button
+            } else if (clickClassName === 'newListInputCancelBtn' && e.target !== e.currentTarget) {   // click the "cancel new list" button
 
-                if (e.target.className === listGrid.lastChild.className) {
+                if (clickClassName === listGrid.lastChild.className) {
                     refreshDisplay();
                     displayNewListButton();
                     displayItemsGrid();
@@ -587,29 +549,41 @@ const createListeners = (function() {
                 }
             }
             
-            if (listSettingBtnClicked === true) {   // handles all clicks on the list settings
-            
-                if (e.target.className.indexOf('listEditBtn') > -1 && e.target !== e.currentTarget) {   // press the edit list button    
-                    lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose edit button was clicked
+            // handles all clicks on the list settings
+            if (listSettingBtnClicked === true && clickClassName.indexOf('newList') < 0) {
 
-                    if (e.target.className !== `editSaveBtn${lastClickedList}`) {
+                if (clickClassName.indexOf('listEditBtn') > -1 && e.target !== e.currentTarget) {   // press the edit list button
+                    lastClickedList = getTargetIndex(e, clickClassName);   // gets the index of list whose edit button was clicked
+
+                    if (clickClassName !== `editSaveBtn${lastClickedList}`) {
+                        refreshDisplay();
+                        displayListGrid();
+                        displayItemsGrid(lastClickedList);
+                        displayListButtons();
                         displayEditListInput(lastClickedList);
                         displayEditListButtons(lastClickedList);  // might be better to revert to changing the classname to editSaveBtn${listIndex}.
                         listSettingBtnClicked = true;
                     } 
 
-                } else if (e.target.className === `editSaveBtn${getTargetIndex(e, e.target.className)}` && e.target !== e.currentTarget) {
-                    lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose edit button was clicked
-                    masterList.listArray[lastClickedList].renameList(updateListName(lastClickedList));
-                    lastClickedList = getTargetIndex(e, e.target.className);   // gets the index of list whose save button was clicked
-                    refreshDisplay();
-                    displayListGrid();
-                    displayListButtons();
-                    displayItemsGrid(lastClickedList);
-                    highlightList(lastClickedList);
-                    listSettingBtnClicked = true;
+                } else if (clickClassName === `editSaveBtn${getTargetIndex(e, clickClassName)}` && e.target !== e.currentTarget) {
 
-                } else if (e.target.className.indexOf('listDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete list button and remove the list based on its index
+                    lastClickedList = getTargetIndex(e, clickClassName);   // gets the index of list whose edit button was clicked
+
+                    if (updateListName(lastClickedList) !== false) {
+                        masterList.listArray[lastClickedList].renameList(updateListName(lastClickedList));
+                        lastClickedList = getTargetIndex(e, clickClassName);   // gets the index of list whose save button was clicked
+                        refreshDisplay();
+                        displayListGrid();
+                        displayListButtons();
+                        displayItemsGrid(lastClickedList);
+                        highlightList(lastClickedList);
+                        listSettingBtnClicked = true;
+
+                    } else {
+                        document.querySelector('input').focus();
+                    }
+
+                } else if (clickClassName.indexOf('listDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete list button and remove the list based on its index
                     deletedList = getTargetIndex(e);
                     masterList.removeList(getTargetIndex(e));
                     refreshDisplay();
@@ -618,18 +592,18 @@ const createListeners = (function() {
                     if (listGrid.lastChild.className === 'newList') {   // all lists were deleted
                         displayItemsGrid();   // just show the "add item" button and empty item
 
-                    } else if (getTargetIndex(e, e.target.className) < lastClickedList || deletedList > getTargetIndex(e, listGrid.lastChild.className) && getTargetIndex(e, e.target.className) === lastClickedList) {
+                    } else if (getTargetIndex(e, clickClassName) < lastClickedList || deletedList > getTargetIndex(e, listGrid.lastChild.className) && getTargetIndex(e, clickClassName) === lastClickedList) {
                         lastClickedList--;
                         displayItemsGrid(lastClickedList);
                         highlightList(lastClickedList);
                     
-                    } else if (getTargetIndex(e, e.target.className) > lastClickedList || getTargetIndex(e, e.target.className) === lastClickedList) {
+                    } else if (getTargetIndex(e, clickClassName) > lastClickedList || getTargetIndex(e, clickClassName) === lastClickedList) {
                         displayItemsGrid(lastClickedList);
                         highlightList(lastClickedList);
                     }
                     listSettingBtnClicked = false;
 
-                } else if (e.target.className !== `editListInput${getTargetIndex(e, e.target.className)}`) {   // refresh the list if the list settings button was clicked
+                } else if (clickClassName !== `editListInput${getTargetIndex(e, clickClassName)}`) {   // refresh the list if the list settings button was clicked
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
@@ -637,13 +611,14 @@ const createListeners = (function() {
                     listSettingBtnClicked = false;
                 }
 
-            } else if (e.target.className === `listSettingsBtn${getTargetIndex(e, e.target.className)}`) {   // if the list settings button is not open
-                listSettingBtnClicked = true;
+            } else if (clickClassName === `listSettingsBtn${getTargetIndex(e, clickClassName)}`) {   // if the list settings button is not open
+                lastClickedList = getTargetIndex(e, clickClassName);
                 refreshDisplay();
                 displayListGrid();
                 displayListButtons();
                 displayItemsGrid(lastClickedList);
                 highlightList(lastClickedList);
+                listSettingBtnClicked = true;
             }
 
             e.stopPropagation();
@@ -651,134 +626,156 @@ const createListeners = (function() {
 
         // handles all clicks on the items
         function clickItemGrid(e) {
+            const clickClassName = e.target.className;
+
+            console.log(clickClassName);
 
             // click on + new item button
-
-            if (addNewItemBtnClicked === true && itemsGrid.firstChild.nextSibling.className === 'newItem') {   // if clicking on something after clicking the + button                
-                
-                console.log('clicked the +, left and clicked + again');
-                
-                addNewItemBtnClicked = false;
+            if (clickClassName === 'newItemButton' && itemsGrid.firstChild.nextSibling.className === 'newItem') {   // display new item input if it's not open already
                 displayNewItemInput();
                 displayNewItemInputNote();
                 displayNewItemInputDate();
 
-            } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === false) {
-                addNewItemBtnClicked = true;
-                displayNewItemInput();
-                displayNewItemInputNote();
-                displayNewItemInputDate();
+            } else if (clickClassName === 'newItemButton' && itemsGrid.firstChild.nextSibling.className !== 'newItem') {   // if the new item input is open and + button is pressed
 
-            } else if (e.target.className === 'newItemButton' && addNewItemBtnClicked === true) {
-
-                if (appendNewItem() !== false) {
-                    masterList.listArray[lastClickedList].items = masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1], appendNewItem()[2]));
+                if (appendNewItem() !== false && masterList.listArray[0] !== undefined) {
+                    console.log(masterList.listArray[0]);
+                    masterList.listArray[lastClickedList].items = 
+                    masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1], appendNewItem()[2]));
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
-                    addNewItemBtnClicked = false;
+
+                } else if (masterList.listArray[0] === undefined) {   // if no lists exist
+                    alert('Please create a new list first.')
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid();
+                    displayNewListInput();
+                
+                } else {
+                    document.querySelector('input').focus();
                 }
 
-            } else if (e.target.className === 'newItemInputCancelBtn') {   // new item cancel button is clicked
+            } else if (clickClassName === 'newItemInputCancelBtn') {   // new item cancel button is clicked
                 refreshDisplay();
                 displayListGrid();
-                displayItemsGrid(lastClickedList);
-                highlightList(lastClickedList);
-                addNewItemBtnClicked = false;
+
+                if (masterList.listArray[0] === undefined) {   // if no lists exist
+                    refreshDisplay();
+                    displayItemsGrid();
+                    displayListGrid();
+                
+                } else {
+                    displayItemsGrid(lastClickedList);
+                    highlightList(lastClickedList);
+                }
             }
-
+            
             // click on the item settings button
+            if (itemSettingBtnClicked === true && itemsGrid.lastChild.className.indexOf('itemDeleteBtn') > -1 && clickClassName !== 'newItemButton') {   // if the item settings are open (delete button is visible)
 
-            if (itemSettingBtnClicked === true) {
+                console.log(itemsGrid.lastChild.className);
 
-                if (e.target.className === `itemEditBtn${getTargetIndex(e, e.target.className)}`) {   // if the edit item button clicked on
+                if (clickClassName === `itemEditBtn${getTargetIndex(e, clickClassName)}`) {   // if the edit item button clicked on
+
                     console.log('you clicked on the edit item settings button');
+
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
                     displayItemsButtons();
-                    displayEditItemInput(lastClickedList, getTargetIndex(e, e.target.id));
-                    displayEditItemButtons(getTargetIndex(e, e.target.id));
-
-                } else if (e.target.className === `editItemSaveBtn${getTargetIndex(e, e.target.className)}`) {
-                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.id)].changeTitle(updateItem(getTargetIndex(e, e.target.id))[0]);
-                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.id)].changeNote(updateItem(getTargetIndex(e, e.target.id))[1]);
-                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.id)].changeDueDate(updateItem(getTargetIndex(e, e.target.id))[2]);
-                    refreshDisplay();
-                    displayListGrid();
-                    displayItemsGrid(lastClickedList);
-                    displayItemsButtons();
+                    displayEditItemButtons(getTargetIndex(e, clickClassName));
+                    displayEditItemInput(lastClickedList, getTargetIndex(e, clickClassName));
                     highlightList(lastClickedList);
+                    itemSettingBtnClicked = true;
 
-                    console.log(masterList.listArray);
+                } else if (clickClassName === `editItemSaveBtn${getTargetIndex(e, clickClassName)}`) {   // if the save button is clicked on
 
-                } else if (e.target.className.indexOf('itemDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete item button and remove the item based on its index
-                    masterList.listArray[lastClickedList].removeItem(getTargetIndex(e, e.target.className));
-                    refreshDisplay();
-                    displayListGrid();
-                    displayItemsGrid(lastClickedList);
-                    highlightList(lastClickedList);
-                    itemSettingBtnClicked = false;
+                    if (updateItem(getTargetIndex(e, clickClassName)) !== false) {
+                        masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].changeTitle(updateItem(getTargetIndex(e, clickClassName))[0]);
+                        masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].changeNote(updateItem(getTargetIndex(e, clickClassName))[1]);
+                        masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].changeDueDate(updateItem(getTargetIndex(e, clickClassName))[2]);
+                        refreshDisplay();
+                        displayListGrid();
+                        displayItemsGrid(lastClickedList);
+                        displayItemsButtons();
+                        highlightList(lastClickedList);
+                        itemSettingBtnClicked = true;
+                    } 
 
-                    console.log(masterList.listArray);
+                } else if (clickClassName.indexOf('itemDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete item button and remove the item based on its index
                     
-                } else if (e.target.className === `itemSettingsBtn${getTargetIndex(e, e.target.className)}`) {   // refresh if the item settings button was clicked again
+                    console.log('you pressed the delete button');
+
+                    masterList.listArray[lastClickedList].removeItem(getTargetIndex(e, clickClassName));
+                    refreshDisplay();
+                    displayListGrid();
+                    displayItemsGrid(lastClickedList);
+                    displayItemsButtons();
+                    highlightList(lastClickedList);
+                    itemSettingBtnClicked = true;
+
+                    console.log(masterList.listArray);
+                
+                
+                } else if (clickClassName === `itemSettingsBtn${getTargetIndex(e, clickClassName)}`) {   // refresh if the item settings button was clicked again
+                    
+                    console.log('you closed the settings button');
+                    
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
                     itemSettingBtnClicked = false;
                 }
-            
-            } else if (e.target.className === `itemSettingsBtn${getTargetIndex(e, e.target.className)}`) {   // if the list settings button is not open
-                itemSettingBtnClicked = true;
+
+            } else if (clickClassName === `itemSettingsBtn${getTargetIndex(e, clickClassName)}`) {   // if the list settings button is not open
+
+                console.log(itemsGrid.lastChild.className);
+                console.log('you opened the settings button');
+
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(lastClickedList);
                 displayItemsButtons();
                 highlightList(lastClickedList);
+                itemSettingBtnClicked = true;
             }
-        
-            console.log(e.target.className);
 
             // click on the item's priority
-
-            if (e.target.className === `notPriority${getTargetIndex(e, e.target.className)}`) {
-                masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].priority = true;
+            if (clickClassName === `notPriority${getTargetIndex(e, clickClassName)}`) {
+                masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].priority = true;
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
-                    addNewItemBtnClicked = false;
 
-            } else if (e.target.className === `priority${getTargetIndex(e, e.target.className)}`) {
-                masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].priority = false;
+            } else if (clickClassName === `priority${getTargetIndex(e, clickClassName)}`) {
+                masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].priority = false;
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
-                    addNewItemBtnClicked = false;
             }
 
             // click on item checkbox
-
-            if (e.target.className.indexOf('itemCheck') > -1) { 
+            if (clickClassName.indexOf('itemCheck') > -1) { 
                 
                 // make the item red/checked
-                if (masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done !== true) {
-                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done = true;
+                if (masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done !== true) {
+                    masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done = true;
                  
-                } else if (e.target.className.indexOf('itemCheckDone') > -1) {
+                } else if (clickClassName.indexOf('itemCheckDone') > -1) {
                     console.log(e.target.classList);
-                    masterList.listArray[lastClickedList].items[getTargetIndex(e, e.target.className)].done = false;
+                    masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done = false;
                 }
 
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(lastClickedList);
                 highlightList(lastClickedList);
-                addNewItemBtnClicked = false;
             }
 
             e.stopPropagation();
