@@ -1,4 +1,4 @@
-import { masterList, itemFactory } from './data.js';
+import { masterList, itemFactory, loadStoredLists, saveListsToStorage } from './data.js';
 
 const content = document.getElementById('content');
 const main = document.createElement('div');
@@ -530,6 +530,7 @@ const createListeners = (function() {
                     displayItemsGrid(getTargetIndex(e, listGrid.lastChild.className));
                     highlightList(getTargetIndex(e, listGrid.lastChild.className));
                     lastClickedList = getTargetIndex(e, listGrid.lastChild.className);
+                    saveListsToStorage(); // save lists to localStorage
                 }
 
             } else if (clickClassName === 'newListInputCancelBtn' && e.target !== e.currentTarget) {   // click the "cancel new list" button
@@ -576,6 +577,7 @@ const createListeners = (function() {
                         displayItemsGrid(lastClickedList);
                         highlightList(lastClickedList);
                         listSettingBtnClicked = true;
+                        saveListsToStorage(); // save lists to localStorage
 
                     } else {
                         document.querySelector('input').focus();
@@ -586,6 +588,7 @@ const createListeners = (function() {
                     masterList.removeList(getTargetIndex(e));
                     refreshDisplay();
                     displayListGrid();
+                    saveListsToStorage(); // save lists to localStorage
 
                     if (listGrid.lastChild.className === 'newList') {   // all lists were deleted
                         displayItemsGrid();   // just show the "add item" button and empty item
@@ -636,12 +639,16 @@ const createListeners = (function() {
             } else if (clickClassName === 'newItemButton' && itemsGrid.firstChild.nextSibling.className !== 'newItem') {   // if the new item input is open and + button is pressed
 
                 if (appendNewItem() !== false && masterList.listArray[0] !== undefined) {
+
+                    console.log(masterList.listArray[lastClickedList].items);
+
                     masterList.listArray[lastClickedList].items = 
                     masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1], appendNewItem()[2]));
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
                     highlightList(lastClickedList);
+                    saveListsToStorage(); // save lists to localStorage
 
                 } else if (masterList.listArray[0] === undefined) {   // if no lists exist
                     alert('Please create a new list first.')
@@ -694,6 +701,7 @@ const createListeners = (function() {
                         displayItemsButtons();
                         highlightList(lastClickedList);
                         itemSettingBtnClicked = true;
+                        saveListsToStorage(); // save lists to localStorage
                     } 
 
                 } else if (clickClassName.indexOf('itemDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete item button and remove the item based on its index
@@ -704,6 +712,7 @@ const createListeners = (function() {
                     displayItemsButtons();
                     highlightList(lastClickedList);
                     itemSettingBtnClicked = true;
+                    saveListsToStorage(); // save lists to localStorage
 
                 } else if (clickClassName === `itemSettingsBtn${getTargetIndex(e, clickClassName)}`) {   // refresh if the item settings button was clicked again
                     refreshDisplay();
@@ -725,17 +734,19 @@ const createListeners = (function() {
             // click on the item's priority
             if (clickClassName === `notPriority${getTargetIndex(e, clickClassName)}`) {
                 masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].priority = true;
-                    refreshDisplay();
-                    displayListGrid();
-                    displayItemsGrid(lastClickedList);
-                    highlightList(lastClickedList);
+                refreshDisplay();
+                displayListGrid();
+                displayItemsGrid(lastClickedList);
+                highlightList(lastClickedList);
+                saveListsToStorage(); // save lists to localStorage
 
             } else if (clickClassName === `priority${getTargetIndex(e, clickClassName)}`) {
                 masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].priority = false;
-                    refreshDisplay();
-                    displayListGrid();
-                    displayItemsGrid(lastClickedList);
-                    highlightList(lastClickedList);
+                refreshDisplay();
+                displayListGrid();
+                displayItemsGrid(lastClickedList);
+                highlightList(lastClickedList);
+                saveListsToStorage(); // save lists to localStorage
             }
 
             // click on item checkbox
@@ -744,9 +755,11 @@ const createListeners = (function() {
                 // make the item red/checked
                 if (masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done !== true) {
                     masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done = true;
+                    saveListsToStorage(); // save lists to localStorage
                  
                 } else if (clickClassName.indexOf('itemCheckDone') > -1) {
                     masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done = false;
+                    saveListsToStorage(); // save lists to localStorage
                 }
 
                 refreshDisplay();
@@ -775,6 +788,7 @@ const initDisplay = (() => {
     subHeader.classList.add('subHeader');
     subHeader.textContent = 'The best to-do list since paper.';
 
+    loadStoredLists();
     createDisplay();
     displayListGrid();
     displayItemsGrid(0);

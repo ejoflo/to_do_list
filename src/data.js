@@ -110,6 +110,7 @@ itemFactory.proto = {
     }
 };
 
+// debug functions
 const getNewItemInfo = function() {   // gets the user provided item name
     let newItemInfoArray = [];
     let itemTitle = prompt('Please describe this item.');
@@ -138,6 +139,24 @@ const assignItemToList = function(fromListName, itemIndex, toListName) {   // as
     toListName.items.push(itemToMove[0]);
 }
 
+const loadStoredLists = function() {   // re-creates MasterList using localStorage save data
+    const masterListStorage = JSON.parse(localStorage.getItem('masterListStored'));
+
+    masterListStorage.listArray.forEach(function(list, mainIndex) {   // add each list
+        masterList.addNewList(list.name);
+
+        list.items.forEach(function(item, index) {   // add each list item with prototypes
+            masterList.listArray[mainIndex].addItem(itemFactory(item.title, item.note, item.date, item.priority, item.done));
+        });
+    });
+};
+
+const saveListsToStorage = function() {   // converts masterList to string and saves to localStorage
+    localStorage.clear();
+    localStorage.setItem('masterListStored', JSON.stringify(masterList));   // creates a key 'MasterListStored' with the valu
+};
+
+/*
 const initList = (function() {   // initializes app with a default list
     const currentDate = new Date();
 
@@ -175,5 +194,6 @@ const initList = (function() {   // initializes app with a default list
     masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Try the artisan coffee', 'Jacob said to get the nitro brew. If Janet is working, ask her for the ultra craft cold brew.', '6/25/20', false, false));
     masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Pack up your stuff :(', undefined, '6/26/20', true, false));
 })();
+*/
 
-export { masterList, itemFactory }
+export { masterList, itemFactory, loadStoredLists, saveListsToStorage }
