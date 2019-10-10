@@ -639,9 +639,6 @@ const createListeners = (function() {
             } else if (clickClassName === 'newItemButton' && itemsGrid.firstChild.nextSibling.className !== 'newItem') {   // if the new item input is open and + button is pressed
 
                 if (appendNewItem() !== false && masterList.listArray[0] !== undefined) {
-
-                    console.log(masterList.listArray[lastClickedList].items);
-
                     masterList.listArray[lastClickedList].items = 
                     masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1], appendNewItem()[2]));
                     refreshDisplay();
