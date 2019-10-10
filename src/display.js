@@ -306,7 +306,6 @@ const updateItem = function(itemIndex) {
     } else {
         return updatedItem;
     }
-
 };
 
 // creates an edit "confirm" save button for list
@@ -394,7 +393,6 @@ const highlightList = function(listIndex) {
 const displayItemsGrid = function(listIndex) {   
     const newItemBtn = document.createElement('button');
     const blankItem = document.createElement('p');
-    const prioritySymbol = '\u{2691}';   // warning sign ⚠
     const settingsSymbol = '\u{22EE}';   // the ellipsis: ⋮
     
     itemsGrid.appendChild(newItemBtn);  // create a new item button
@@ -601,6 +599,7 @@ const createListeners = (function() {
                         displayItemsGrid(lastClickedList);
                         highlightList(lastClickedList);
                     }
+
                     listSettingBtnClicked = false;
 
                 } else if (clickClassName !== `editListInput${getTargetIndex(e, clickClassName)}`) {   // refresh the list if the list settings button was clicked
@@ -628,8 +627,6 @@ const createListeners = (function() {
         function clickItemGrid(e) {
             const clickClassName = e.target.className;
 
-            console.log(clickClassName);
-
             // click on + new item button
             if (clickClassName === 'newItemButton' && itemsGrid.firstChild.nextSibling.className === 'newItem') {   // display new item input if it's not open already
                 displayNewItemInput();
@@ -639,7 +636,6 @@ const createListeners = (function() {
             } else if (clickClassName === 'newItemButton' && itemsGrid.firstChild.nextSibling.className !== 'newItem') {   // if the new item input is open and + button is pressed
 
                 if (appendNewItem() !== false && masterList.listArray[0] !== undefined) {
-                    console.log(masterList.listArray[0]);
                     masterList.listArray[lastClickedList].items = 
                     masterList.listArray[lastClickedList].addItem(itemFactory(appendNewItem()[0], appendNewItem()[1], appendNewItem()[2]));
                     refreshDisplay();
@@ -676,12 +672,7 @@ const createListeners = (function() {
             // click on the item settings button
             if (itemSettingBtnClicked === true && itemsGrid.lastChild.className.indexOf('itemDeleteBtn') > -1 && clickClassName !== 'newItemButton') {   // if the item settings are open (delete button is visible)
 
-                console.log(itemsGrid.lastChild.className);
-
                 if (clickClassName === `itemEditBtn${getTargetIndex(e, clickClassName)}`) {   // if the edit item button clicked on
-
-                    console.log('you clicked on the edit item settings button');
-
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
@@ -706,9 +697,6 @@ const createListeners = (function() {
                     } 
 
                 } else if (clickClassName.indexOf('itemDeleteBtn') > -1 && e.target !== e.currentTarget) {   // press the delete item button and remove the item based on its index
-                    
-                    console.log('you pressed the delete button');
-
                     masterList.listArray[lastClickedList].removeItem(getTargetIndex(e, clickClassName));
                     refreshDisplay();
                     displayListGrid();
@@ -717,13 +705,7 @@ const createListeners = (function() {
                     highlightList(lastClickedList);
                     itemSettingBtnClicked = true;
 
-                    console.log(masterList.listArray);
-                
-                
                 } else if (clickClassName === `itemSettingsBtn${getTargetIndex(e, clickClassName)}`) {   // refresh if the item settings button was clicked again
-                    
-                    console.log('you closed the settings button');
-                    
                     refreshDisplay();
                     displayListGrid();
                     displayItemsGrid(lastClickedList);
@@ -732,10 +714,6 @@ const createListeners = (function() {
                 }
 
             } else if (clickClassName === `itemSettingsBtn${getTargetIndex(e, clickClassName)}`) {   // if the list settings button is not open
-
-                console.log(itemsGrid.lastChild.className);
-                console.log('you opened the settings button');
-
                 refreshDisplay();
                 displayListGrid();
                 displayItemsGrid(lastClickedList);
@@ -768,7 +746,6 @@ const createListeners = (function() {
                     masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done = true;
                  
                 } else if (clickClassName.indexOf('itemCheckDone') > -1) {
-                    console.log(e.target.classList);
                     masterList.listArray[lastClickedList].items[getTargetIndex(e, clickClassName)].done = false;
                 }
 
@@ -779,7 +756,6 @@ const createListeners = (function() {
             }
 
             e.stopPropagation();
-
         }
     } 
     return { 
@@ -795,7 +771,6 @@ const initDisplay = (() => {
 
     appHeader.textContent = `${checkMark} DO`;
     content.insertAdjacentElement('afterbegin', appHeader);
-    // content.insertBefore(appHeader, main.childNodes[0]);
     appHeader.insertAdjacentElement('afterend', subHeader);
     subHeader.classList.add('subHeader');
     subHeader.textContent = 'The best to-do list since paper.';

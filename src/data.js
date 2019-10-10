@@ -13,7 +13,6 @@ const masterList = (function() {
 
     const removeList = (listIndex) => {   // permanently removes a list from the "master" array
         let deletedList = listArray.splice(listIndex, 1); // can use as purgatory
-        console.log (deletedList);
     };
 
     const getLists = () => {
@@ -176,7 +175,5 @@ const initList = (function() {   // initializes app with a default list
     masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Try the artisan coffee', 'Jacob said to get the nitro brew. If Janet is working, ask her for the ultra craft cold brew.', '6/25/20', false, false));
     masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Pack up your stuff :(', undefined, '6/26/20', true, false));
 })();
-
-console.log(masterList.getLists());
 
 export { masterList, itemFactory }
