@@ -53,7 +53,7 @@ input {
 #main {
     display: grid;
     grid-column-gap: 10px;
-    grid-template-columns: auto 450px;
+    grid-template-columns: auto 500px;
     align-items: start;
     justify-content: center;
 }
@@ -114,7 +114,7 @@ input {
     grid-column: 2 / 3;
     font-size: 20pt;
     vertical-align: middle;
-    line-height: 0px;
+    /* line-height: 0px; */
     width: 25px;
     color:white;
     background-color: transparent;
@@ -134,7 +134,7 @@ input {
     font-size: 18pt;
     font-weight: 400;
     vertical-align: middle;
-    line-height: 5px;
+    /* line-height: 5px; */
     width: 20px;
     color:white;
     background-color: transparent;
@@ -176,7 +176,7 @@ button[class^="listSettingsBtn"] {
     font-size: 25px;
     font-weight: bold;
     vertical-align: middle;
-    line-height: 0px;
+    /* line-height: 0px; */
     width: 15px;
     color:rgb(135, 34, 78);
     background-color: rgb(54, 15, 32);
@@ -353,7 +353,7 @@ button[class^="editSaveBtn"]:hover {
     display: grid;
     font-size: 8pt;
     grid-column: 2 / 5;
-    grid-template-columns: 60px 25px 25px 25px;
+    grid-template-columns: 70px 25px 25px 25px;
     color: white;
     background-color: rgb(11, 47, 66);
     border-top: 0;
