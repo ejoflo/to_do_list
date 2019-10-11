@@ -156,8 +156,7 @@ const saveListsToStorage = function() {   // converts masterList to string and s
     localStorage.setItem('masterListStored', JSON.stringify(masterList));   // creates a key 'MasterListStored' with the valu
 };
 
-/*
-const initList = (function() {   // initializes app with a default list
+const initList = function() {   // initializes app with a default list
     const currentDate = new Date();
 
     // Initialize My List
@@ -193,7 +192,6 @@ const initList = (function() {   // initializes app with a default list
     masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Shop at the antique store', 'Look for the wooden keychains', '6/24/20', true, false));
     masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Try the artisan coffee', 'Jacob said to get the nitro brew. If Janet is working, ask her for the ultra craft cold brew.', '6/25/20', false, false));
     masterList.listArray[3].items = masterList.listArray[3].addItem(itemFactory('Pack up your stuff :(', undefined, '6/26/20', true, false));
-})();
-*/
+};
 
-export { masterList, itemFactory, loadStoredLists, saveListsToStorage }
+export { masterList, itemFactory, loadStoredLists, saveListsToStorage, initList }

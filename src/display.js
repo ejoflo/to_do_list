@@ -1,4 +1,4 @@
-import { masterList, itemFactory, loadStoredLists, saveListsToStorage } from './data.js';
+import { masterList, itemFactory, loadStoredLists, saveListsToStorage, initList } from './data.js';
 
 const content = document.getElementById('content');
 const main = document.createElement('div');
@@ -240,7 +240,7 @@ const displayEditItemInput = function(listIndex, itemIndex) {
     editItemInputDate.classList.add(`editItemInputDate${itemIndex}`);
     editItemInputDate.setAttribute('name', 'editItemDate');
     editItemInputDate.setAttribute('placeholder', 'MM/DD/YY');
-    editItemInputDate.setAttribute('size', '10');
+    editItemInputDate.setAttribute('size', '12');
     editItemInputDate.setAttribute('maxlength', '8');
     
     itemTitleToEdit.replaceWith(editItem);
@@ -785,7 +785,12 @@ const initDisplay = (() => {
     subHeader.classList.add('subHeader');
     subHeader.textContent = 'The best to-do list since paper.';
 
-    loadStoredLists();
+    if (localStorage.getItem('masterListStored')) {
+        loadStoredLists();
+    } else {
+        initList()
+    }
+    
     createDisplay();
     displayListGrid();
     displayItemsGrid(0);
